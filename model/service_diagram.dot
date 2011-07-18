@@ -1,0 +1,38 @@
+digraph class_diagram {
+  graph [labeljust = "l", labelloc = "t"];
+  node [shape = "record"];
+  subgraph cluster_Expo {
+    graph [label = "Expo"];
+    _Expo_RCtrlService [label = "{RCtrlService|+ command_delete()\l+ ruby_delayed_command()\l+ asynchronous_command()\l+ bulk_command_results()\l+ command()\l+ ruby_asynchronous_command()\l+ interactive_command()\l+ command_input()\l+ bulk_command_infos()\l+ generic_command()\l+ command_result()\l+ command_info()\l+ command_archive()\l+ delayed_command()\l+ ruby_command()\l+ get_command_inputs()\l+ command_rewind()\l+ bulk_commands()\l+ recursive_command()\l}"];
+    _Expo_ResCtrlService [label = "{ResCtrlService|+ open_reservation()\l+ reservation_job()\l+ reservation_stats()\l+ new_reservation()\l+ delete_reservation()\l+ reservation_info()\l+ reservation_jobs()\l+ reservation_resources()\l}"];
+    _Expo_ExpCtrlService [label = "{ExpCtrlService|+ get_all_nodes()\l+ create_experiment()\l+ get_all_commands()\l+ add_command()\l+ add_reservation()\l+ delete_command()\l+ get_all_reservations()\l+ experiment_info()\l+ get_nodes()\l+ add_nodes()\l+ add_commands()\l}"];
+    _Expo_DelayedCommandScheduler [label = "{DelayedCommandScheduler|+ register_command()\l+ del_command()\l}"];
+    _Expo_RCtrlResponse [label = "{RCtrlResponse|+ result=()\l+ result()\l+ method_missing()\l+ []()\l+ []=()\l}"];
+    _Expo_RCtrlCommand [label = "{RCtrlCommand|+ get_inputs()\l+ scheduled_time()\l+ server_name()\l+ inputs=()\l+ end_time()\l+ command_response()\l+ command()\l+ ruby_script=()\l+ inputs()\l+ finished=()\l+ server_name=()\l+ cmd=()\l+ end_time=()\l+ set_recursive()\l+ add_input()\l+ ruby_command=()\l+ parameters()\l+ scheduled()\l+ recursive=()\l+ interactive()\l+ archived()\l+ archive()\l+ cmd()\l+ set_end_time()\l+ started()\l+ started=()\l+ ruby_script()\l+ set_start_time()\l+ command=()\l+ scheduled=()\l+ interactive=()\l+ parameters=()\l+ command_response=()\l+ ruby_command()\l+ archived=()\l+ finished()\l+ recursive()\l+ start_time()\l+ set_ruby_script()\l+ start_time=()\l+ scheduled_time=()\l}"];
+    _Expo_Heap [label = "{Heap|+ size()\l+ clear()\l+ shift()\l+ insert()\l+ first()\l}"];
+  }
+  subgraph cluster_CmdCtrl {
+    graph [label = "CmdCtrl"];
+    subgraph cluster_Commands {
+      graph [label = "Commands"];
+      _CmdCtrl_Commands_CommandBufferer [label = "{CommandBufferer|+ run()\l+ on_output_stdout()\l+ pid()\l+ gets()\l+ on_output()\l+ on_output_stderr()\l+ exited?()\l+ read_stdout()\l+ puts_stdin()\l+ wait()\l+ read_stderr()\l+ save_stdout()\l+ cmd()\l+ close_fd()\l+ gets_stderr()\l+ puts()\l+ rewind_stdout()\l+ gets_stdout()\l+ rewind_stderr()\l+ on_exit()\l+ wait_on_exit()\l+ status()\l+ write_stdin()\l+ kill()\l+ save_stderr()\l}"];
+      _CmdCtrl_Commands_Command [label = "{Command|+ run()\l+ stdout()\l+ pid()\l+ stdin()\l+ stderr()\l+ exited?()\l+ wait()\l+ cmd()\l+ close_fds()\l+ status()\l+ kill()\l+ wait_no_hang()\l}"];
+    }
+  }
+  _Expo_ResCtrlService -> _Expo_RCtrlService [arrowhead = "onormal"];
+  _Expo_ResCtrlService -> _Expo_RCtrlCommand [arrowhead = "vee"];
+  _Expo_RCtrlService -> _Expo_Heap [arrowhead = "vee"];
+  _Expo_RCtrlService -> _CmdCtrl_Commands_Command [arrowhead = "vee"];
+  _Expo_RCtrlService -> _Expo_DelayedCommandScheduler [arrowhead = "vee"];
+  _CmdCtrl_Commands_CommandBufferer -> _CmdCtrl_Commands_Command [arrowhead = "vee"];
+  _Expo_ExpCtrlService -> _Expo_ResCtrlService [arrowhead = "onormal"];
+  _Expo_ResCtrlService -> _CmdCtrl_Commands_CommandBufferer [arrowhead = "vee"];
+  _Expo_DelayedCommandScheduler -> _Expo_RCtrlResponse [arrowhead = "vee"];
+  _CmdCtrl_Commands_CommandBufferer -> _Expo_Heap [arrowhead = "vee"];
+  _CmdCtrl_Commands_CommandBufferer -> _Expo_RCtrlCommand [arrowhead = "vee"];
+  _Expo_RCtrlService -> _Expo_RCtrlCommand [arrowhead = "vee"];
+  _Expo_RCtrlService -> _Expo_RCtrlResponse [arrowhead = "vee"];
+  _Expo_DelayedCommandScheduler -> _Expo_Heap [arrowhead = "vee"];
+  _Expo_ResCtrlService -> _Expo_Heap [arrowhead = "vee"];
+  _Expo_RCtrlService -> _CmdCtrl_Commands_CommandBufferer [arrowhead = "vee"];
+}

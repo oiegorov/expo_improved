@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/cmdctrl/!svn/ver/1/test/data
+END
+dialog.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/cmdctrl/!svn/ver/1/test/data/dialog.rb
+END
+dialog.sh
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/cmdctrl/!svn/ver/1/test/data/dialog.sh
+END
+dialog_err.rb
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/cmdctrl/!svn/ver/1/test/data/dialog_err.rb
+END

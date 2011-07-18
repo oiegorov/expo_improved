@@ -1,0 +1,12 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/ruby-pkg-tools/1/class/ruby-setup-rb.mk
+include /usr/share/ruby-pkg-tools/1/rules/uploaders.mk
+
+install/librctrl-ruby-doc::
+	dh_rdoc -plibrctrl-ruby-doc ext lib
+

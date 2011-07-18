@@ -1,0 +1,58 @@
+             Karo
+            ------
+
+Karo est un exécuteur d'automate utilisant des sous parties de l'atelier Expo.
+L'automate est exprimé directement dans le programme. Chaque étape de l'automate prend en entrée un ensemble de resources, en résultat il peut fournir un ensemble de ressource ayant correctement passé l'étape et un ensemble de ressource ayant échoué dans cette étape. Les deux ensembles résultant sont alors traités en concurrence (la prochaine étape/le traitement d'erreur: nouvel essai ou étape de traitement d'erreur).
+
+**Fonctionnalités
+* Support/transmissions des ensembles de ressources (ResourceSet)
+* Etape composée (étape d'étapes)
+* Execution concurrente (nouveau thread lors du traitement d'erreur)
+* Nouvel essai sur le traitement (:nb_retry)
+* Choix de l'étape pour le traitement d'erreur (:on_error)
+* Passage d'option par étape
+* Accès au DSL expo (ptask, atask, task, copy...)
+* Callback à chaque fin d'étape (permet une surveillance globale)
+* Génération du graphe de l'automate (via GraphViz) en format svg
+* Génération du graphe de l'exécution de l'automate (via GraphViz) en format svg
+
+
+** Fichiers:
+* karo.rb: bibliothèque principal
+* expo-g5k.rb: variante de expo.rb (pour le propotypage particulier)
+* automaton.rb: exemple d'automate
+
+** Dépendances
+** celle d'Expo: cmdctrl, rctrl, taktuk (et graphviz pour la génération de graphe "optionnel")
+
+** Installation
+* Variable RUBYLIB à positionner:
+export RUBYLIB="*PATH_INSTALL*/cmdctrl/lib:*PATH_INSTALL*/rctrl/lib:*PATH_INSTALL*/cmdctrl/bin:
+								*PATH_INSTALL*/rctrl/bin:*PATH_INSTALL*/taktuk/taktuk_wrapper"
+
+
+* Utilisation:
+* 
+./automaton.rb
+
+
+*** WARNING
+* seul ptask est à demi-supporter (à faire les autres atask, task, copy, parallel_section,...)
+* la partie gestion des erreurs sur le retour des ptask est n'est pas fait
+* on peut imaginer des extensions mais il faut faire des tests plus poussés.
+
+
+Version anglaise à faire/compléter:
+
+Karo is an automaton executor. It's based on some other part of Expo framework.
+Automata are expressed directely in program.
+
+A resource set is provided at the begin, after each step's execution two resource sets can be provide at the end of execution one with resources which are indicated as successufly pass through step and a second set where resource have failed.
+
+Features:
+*only one step at exit for good resource set
+*only one step at exit for bad resource set
+*graph generation of automaton
+*graph generation of automaton's execution
+*concurrent of execution paths
+*composed step (step of step)

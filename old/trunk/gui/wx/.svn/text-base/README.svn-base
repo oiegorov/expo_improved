@@ -1,0 +1,7 @@
+
+
+progressbar.rb: program to create png progressbar's images
+
+extract_xml.rb: program to remove wxframe section in xrc file (use to generate expe_ctrl.xrc)
+*.wxg: native format for wxGlade
+*.xrc: xml format use by wxwidget to describe gui

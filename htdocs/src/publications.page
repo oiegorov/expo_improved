@@ -1,0 +1,10 @@
+---
+title: Related Publications
+in_menu: true
+routed_title: Related Publications
+---
+## Related Publications
+
+Brice Videau, Corinne Touati, and Olivier Richard. <i>Toward an experiment engine for lightweight grids.</i> In MetroGrid workshop : Metrology for Grid Networks. ACM publishing, Lyon, France, October 2007. {link: {path: ../bib/Metro07.html, attr: {:link_text: bibtex}}}
+
+Brice Videau and Olivier Richard. <i>Expo : un moteur de conduite d'expériences pour plates-formes dédiées.</i> In Conférence Française en Systèmes d'Exploitation (CFSE), Fribourg, Switzerland, February 2008. {link: {path: ../bib/CFSE6.html, attr: {:link_text: bibtex}}}

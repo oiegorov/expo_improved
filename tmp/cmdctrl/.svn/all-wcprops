@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 25
+/svn/cmdctrl/!svn/ver/26/
+END
+README.pkg_debian
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/cmdctrl/!svn/ver/1/README.pkg_debian
+END
+LICENSE
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/cmdctrl/!svn/ver/1/LICENSE
+END
+Rakefile
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/cmdctrl/!svn/ver/26/Rakefile
+END
+setup.rb
+K 25
+svn:wc:ra_dav:version-url
+V 32
+/svn/cmdctrl/!svn/ver/1/setup.rb
+END
+ChangeLog
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/cmdctrl/!svn/ver/1/ChangeLog
+END
+COPYING
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/cmdctrl/!svn/ver/1/COPYING
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 30
+/svn/cmdctrl/!svn/ver/1/README
+END

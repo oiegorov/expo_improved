@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/expo/!svn/ver/17/debian-pkg/debian
+END
+control
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/expo/!svn/ver/17/debian-pkg/debian/control
+END
+compat
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/expo/!svn/ver/17/debian-pkg/debian/compat
+END
+control.in
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/expo/!svn/ver/17/debian-pkg/debian/control.in
+END
+changelog
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/expo/!svn/ver/17/debian-pkg/debian/changelog
+END
+copyright
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/expo/!svn/ver/17/debian-pkg/debian/copyright
+END
+libcmdctrl-ruby-doc.docs
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/expo/!svn/ver/17/debian-pkg/debian/libcmdctrl-ruby-doc.docs
+END
+rules
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/expo/!svn/ver/17/debian-pkg/debian/rules
+END

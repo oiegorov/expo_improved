@@ -1,0 +1,22 @@
+module Expo
+#structure containing parameters for recusive commands
+CommandParameters = Struct::new(:command_line)
+RecursiveCommandParameters = Struct::new(:server_name, :command, :parameters)
+AsynchronousCommandParameters = Struct::new(:command_line)
+BulkCommandsParameters = Struct::new(:commands)
+BulkCommandResultsParameters = Struct::new(:command_numbers)
+BulkCommandInfosParameters = Struct::new(:command_numbers)
+CommandInfoParameters = Struct::new(:command_number)
+CommandInputParameters = Struct::new(:command_number, :input)
+CommandResultParameters = Struct::new(:command_number)
+GetCommandInputsParameters = Struct::new(:command_number)
+InteractiveCommandParameters = Struct::new(:command_line)
+CommandRewindParameters = Struct::new(:command_number) 
+RubyCommandParameters = Struct::new(:ruby_script)
+DelayedCommandParameters = Struct::new(:command_line, :date)
+RubyDelayedCommandParameters = Struct::new(:ruby_script, :date)
+RubyAsynchronousCommandParameters = Struct::new(:ruby_script)
+CommandWaitParameters = Struct::new(:command_number, :polling_time, :delay)
+CommandDeleteParameters = Struct::new(:command_number)
+CommandArchiveParameters = Struct::new(:command_number)
+end

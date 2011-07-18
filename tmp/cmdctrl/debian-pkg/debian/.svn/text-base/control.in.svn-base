@@ -1,0 +1,27 @@
+Source: libcmdctrl-ruby
+Section: interpreters
+Priority: optional
+Maintainer: Lucas Nussbaum <lucas.nussbaum@imag.fr>
+Build-Depends: debhelper (>= 5), ruby1.8, ruby1.8-dev, cdbs (>= 0.4.32ubuntu13), ruby-pkg-tools (>= 0.8), rdoc, graphviz
+Standards-Version: 3.6.2.2
+
+Package: libcmdctrl-ruby
+Architecture: all
+Depends: libcmdctrl-ruby1.8
+Suggests: libcmdctrl-ruby-doc
+Description: TODO
+ TODO
+ .
+ Homepage: http://TODO
+
+Package: libcmdctrl-ruby1.8
+Architecture: all
+Suggests: libcmdctrl-ruby-doc
+Depends: ${shlibs:Depends}
+Description: TODO
+  TODO
+
+Package: libcmdctrl-ruby-doc
+Architecture: all
+Description: TODO
+ TODO

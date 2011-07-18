@@ -1,0 +1,122 @@
+=begin
+    Copyright (C) 2007  Lucas Nussbaum
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+=end
+#!/usr/bin/ruby -w
+
+$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+
+require 'cmdctrl/prunner'
+require 'optparse'
+
+include CmdCtrl
+include CmdCtrl::Commands
+
+pr = ParallelRunner::new
+
+# default values
+program = "true"
+connector = "ssh"
+nodes = []
+login = ""
+nodeslist = nil
+group = false
+interactive = false
+
+opts = OptionParser::new do |opts|
+  opts.banner = "Usage: rentinel [options]"
+  opts.separator ""
+  opts.separator "Options:"
+
+  opts.on("-p", "--program <command>", "Program/command to run (default is \"true\")") do |c|
+    program = c
+  end
+
+  opts.on("-m", "--node <node>", "Node to contact (use several times if needed)") do |m|
+    nodes << m
+  end
+
+  opts.on("-f", "--nodeslist <file>", "Use nodes list from file") do |f|
+    nodeslist = f
+  end
+
+  opts.on("-l", "--login <login>", "Login to use when connecting to hosts") do |l|
+    login = "-l #{l} "
+  end
+
+  opts.on("-i", "--interactive", "Run commands inside a PTY (provides better interactivity, but uses more resources)") do
+    interactive = true
+  end
+
+  opts.on("-w", "--window <window>", "Max number of concurrent running processes") do |w|
+    pr.window = w.to_i
+  end
+
+  opts.on("-g", "--group", "Group identical outputs") do
+    group = true
+  end
+
+  opts.on("-t", "--timeout <timeout>", "Consider that the command timed out after <timeout> seconds") do |t|
+    pr.timeout = t.to_f
+  end
+
+  opts.on("-c", "--connector <rsh|ssh>", "Connector to use (default: ssh)") do |c|
+    connector = c
+  end
+
+end
+opts.parse!(ARGV)
+
+# generating nodes list
+if nodeslist
+  IO::readlines(nodeslist).each do |l|
+    nodes << l.chomp
+  end
+end
+if nodes.empty?
+  puts "No nodes specified. Exiting."
+  exit(1)
+end
+
+# generating commands
+if interactive
+  cmd = InteractiveCommand
+else
+  cmd = Command
+end
+nodes.each do |n|
+  pr.commands << CommandBufferer::new(cmd::new("#{connector} #{login}#{n} \"#{program}\""))
+#  pr.commands << CommandBufferer::new(cmd::new("/tmp/sleep"))
+end
+
+tstart = Time::new
+pr.run
+pr.wait
+tstop = Time::new
+
+if group
+  pr.group_results.sort.each do |rg|
+    puts rg
+  end
+else
+  pr.results.each_pair do |k, r|
+    rg = ParallelRunnerResultGroup::new(r.stdout, r.stderr, r.status, r.command)
+    puts rg
+  end
+end
+
+# summary
+puts sprintf("--- #{pr.commands.length} commands executed in %.2f seconds ---", (tstop - tstart))

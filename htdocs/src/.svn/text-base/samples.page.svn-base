@@ -1,0 +1,17 @@
+---
+title: Code samples
+in_menu: true
+routed_title: Code samples
+---
+## A simple expo program
+
+{coderay:: ruby}{include_file: {filename: src/simple.rb, process_output:
+false, escape_html: false}}{coderay}
+
+This simple program takes place in the Grid'5000 context. 20 resources are
+obtained from 2 different clusters : helios and gdx. Those resources are
+checked for non responding machines. After that each resource execute the
+date command the result of the command is unused. After that each resource
+from gdx runs the sleep 1 command. The duration of those commands is
+automatically logged. The duration of the command for each resource is
+printed on screen. The mean is also displayed.

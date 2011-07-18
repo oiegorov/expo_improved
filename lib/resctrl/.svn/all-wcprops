@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/expo/!svn/ver/17/lib/resctrl
+END
+resctrl_resctrlreservation.rb
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/expo/!svn/ver/17/lib/resctrl/resctrl_resctrlreservation.rb
+END
+resctrl_service.rb
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/expo/!svn/ver/17/lib/resctrl/resctrl_service.rb
+END
+resctrl_structures.rb
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/expo/!svn/ver/17/lib/resctrl/resctrl_structures.rb
+END
+resctrl_resctrlclient.rb
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/expo/!svn/ver/17/lib/resctrl/resctrl_resctrlclient.rb
+END
+resctrl_resctrlresponse.rb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/expo/!svn/ver/17/lib/resctrl/resctrl_resctrlresponse.rb
+END

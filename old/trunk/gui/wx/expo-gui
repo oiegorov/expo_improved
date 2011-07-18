@@ -1,0 +1,535 @@
+#!/usr/bin/env ruby
+# A simple expo Gui based on aui.rb example from wxRuby2 Sample code
+
+begin
+  require 'wx'
+rescue LoadError => no_wx_err
+  begin
+    require 'rubygems'
+    require 'wx'
+  rescue LoadError
+    raise no_wx_err
+  end
+end
+
+require 'expo-wx-widgets'
+require 'expo-wx-client'
+#require 'expo-wx-widgets'
+
+class ExpoGui < Wx::Frame
+
+	attr_accessor :current_expe_view, :mgr, :notebook, :expe_ctrl_view
+
+  consts = %w[
+        ID_CreateTree
+        ID_CreateText
+        ID_CreateHTML
+        ID_CreateNotebook
+        ID_TextContent
+        ID_TreeContent
+        ID_HTMLContent
+        ID_NotebookContent
+        ID_CreatePerspective
+        ID_CopyPerspectiveCode
+        ID_AllowFloating
+        ID_AllowActivePane
+        ID_TransparentHint
+        ID_VenetianBlindsHint
+        ID_RectangleHint
+        ID_NoHint
+        ID_HintFade
+        ID_NoVenetianFade
+        ID_TransparentDrag
+        ID_NoGradient
+        ID_VerticalGradient
+        ID_HorizontalGradient
+        ID_Settings
+        ID_NotebookNoCloseButton
+        ID_NotebookCloseButton
+        ID_NotebookCloseButtonAll
+        ID_NotebookCloseButtonActive
+        ID_NotebookAllowTabMove
+        ID_NotebookAllowTabExternalMove
+        ID_NotebookAllowTabSplit
+        ID_NotebookWindowList
+        ID_NotebookScrollButtons
+        ID_NotebookTabFixedWidth
+        ID_NotebookArtGloss
+        ID_NotebookArtSimple ]
+  
+  consts.each_with_index do | c, i |
+    const_set(c, 2000 + i) 
+  end
+  ID_FirstPerspective = ID_CreatePerspective + 1000
+
+  def initialize(*args)
+    super
+    @mgr = Wx::AuiManager.new
+    @mgr.set_managed_window(self)
+    @perspectives = []
+    
+    # set up default notebook style
+    @notebook_style = Wx::AUI_NB_DEFAULT_STYLE|
+      Wx::AUI_NB_TAB_EXTERNAL_MOVE|Wx::NO_BORDER
+    @notebook_theme = 0
+    setup_menu
+    create_status_bar
+    get_status_bar.set_status_text("Ready")
+    set_min_size( Wx::Size.new(400,300) )
+    setup_toolbars
+    setup_panes
+#    setup_perspectives
+    setup_events
+
+		$expo_client.gui = self
+		$expo_client.load_initial_experiment
+    @mgr.update
+  end
+
+  #
+  def setup_menu
+    mb = Wx::MenuBar.new
+
+    file_menu = Wx::Menu.new
+    file_menu.append(Wx::ID_EXIT, "Exit")
+
+    view_menu = Wx::Menu.new
+    view_menu.append(ID_CreateText, "Create Text Control")
+    view_menu.append(ID_CreateHTML, "Create HTML Control")
+    view_menu.append(ID_CreateTree, "Create Tree")
+    view_menu.append(ID_CreateNotebook, "Create Notebook")
+    view_menu.append_separator
+    view_menu.append( ID_TextContent, 
+                      "Use a Text Control for the Content Pane")
+    view_menu.append( ID_HTMLContent, 
+                      "Use an HTML Control for the Content Pane")
+    view_menu.append( ID_TreeContent, 
+                      "Use a Tree Control for the Content Pane")
+    view_menu.append( ID_NotebookContent, 
+                      "Use a wxAuiNotebook control for the Content Pane")
+
+    help_menu = Wx::Menu.new
+    help_menu.append(Wx::ID_ABOUT, "About...")
+
+    mb.append(file_menu, "File")
+    mb.append(view_menu, "View")
+    mb.append(help_menu, "Help")
+
+    set_menu_bar(mb)
+  end
+
+  def setup_events
+    evt_erase_background { | e | on_erase_background(e) }
+    evt_size{ | e | on_size(e) }
+
+    evt_menu(ID_CreateTree) { | e | on_create_tree }
+    evt_menu(ID_CreateText) { | e | on_create_text } 
+    evt_menu(ID_CreateHTML) { | e | on_create_html } 
+    evt_menu(ID_CreateNotebook) { | e | on_create_notebook } 
+    evt_menu(ID_TreeContent) { | e | on_change_content_pane(e) } 
+    evt_menu(ID_TextContent) { | e | on_change_content_pane(e) } 
+    evt_menu(ID_HTMLContent) { | e | on_change_content_pane(e) } 
+    evt_menu(ID_NotebookContent) { | e | on_change_content_pane(e) } 
+    evt_menu(Wx::ID_EXIT) { | e | on_exit } 
+    evt_menu(Wx::ID_ABOUT) { | e | on_about } 
+  end
+
+  # create some toolbars
+  def setup_toolbars
+    # create vertical toolbar
+    tvb = Wx::ToolBar.new( self, Wx::ID_ANY, 
+                           Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE,
+                           Wx::TB_FLAT|Wx::TB_NODIVIDER|Wx::TB_VERTICAL)
+    tvb.set_tool_bitmap_size( Wx::Size.new(32,32))
+    tvb.add_tool( 101, "Test", 
+                  Wx::ArtProvider::get_bitmap(Wx::ART_GO_HOME) )
+    tvb.add_separator
+    tvb.add_tool( 102, "Test", 
+                  Wx::ArtProvider::get_bitmap(Wx::ART_NEW_DIR) )
+    tvb.add_tool( 104, "Test", 
+                  Wx::ArtProvider::get_bitmap(Wx::ART_INFORMATION) )
+    tvb.add_tool( 105, "Test", 
+                  Wx::ArtProvider::get_bitmap(Wx::ART_CROSS_MARK) )
+    tvb.add_tool( 106, "Test", 
+                  Wx::ArtProvider::get_bitmap(Wx::ART_MISSING_IMAGE) )
+		tvb.add_tool( 107, "Test", 
+                  Wx::ArtProvider::get_bitmap(Wx::ART_EXECUTABLE_FILE) )
+
+    tvb.realize
+
+    # add the toolbars to the manager
+
+    pi = Wx::AuiPaneInfo.new
+    pi.set_name('tvb').set_caption("Vertical Toolbar")
+    pi.toolbar_pane.left.set_gripper_top
+    pi.set_left_dockable(false).set_right_dockable(false)
+    @mgr.add_pane(tvb, pi)
+  end
+
+  def setup_panes
+    # add a bunch of panes
+
+	  pi = Wx::AuiPaneInfo.new
+    pi.set_name('expe_info').set_caption('Experiments Control').top
+    pi.set_layer(1).set_position(1).set_close_button.set_maximize_button
+    @mgr.add_pane(create_expe_ctrl, pi)
+
+    pi = Wx::AuiPaneInfo.new
+    pi.set_name('tree').set_caption('Resource Sets Tree').left
+    pi.set_layer(1).set_position(1).set_close_button.set_maximize_button
+    @mgr.add_pane(create_tree_ctrl, pi)
+
+#    wnd10 = create_text_ctrl("This pane will prompt the user before hiding.")
+#    pi = Wx::AuiPaneInfo.new
+#    pi.set_name('test10').set_caption('Text Pane with hide prompt')
+#    pi.bottom.set_layer(1).set_position(1)
+#    @mgr.add_pane(wnd10, pi) 
+
+   
+		@notebook = create_notebook
+
+    pi = Wx::AuiPaneInfo.new
+    pi.set_name('notebook').center_pane
+    @mgr.add_pane(@notebook, pi)
+
+  end
+
+  def on_erase_background(event)
+    event.skip
+  end
+
+  def on_size(event)
+    event.skip
+  end
+
+  def on_settings
+    float_pane = @mgr.get_pane("settings").float.show
+    if float_pane.get_floating_position == Wx::DEFAULT_POSITION
+      float_pane.set_floating_position( get_start_position )
+    end
+    @mgr.update
+  end
+
+  def on_gradient(event)
+    gradient = nil
+    case event.get_id
+    when ID_NoGradient
+      gradient = Wx::AUI_GRADIENT_NONE
+    when ID_VerticalGradient
+      gradient = Wx::AUI_GRADIENT_VERTICAL
+    when ID_HorizontalGradient
+      gradient = Wx::AUI_GRADIENT_HORIZONTAL
+    end
+    return if not gradient
+    @mgr.get_art_provider.set_metric( Wx::AUI_DOCKART_GRADIENT_TYPE, 
+                                      gradient)
+    @mgr.update
+  end
+
+  def on_manager_flag(event)
+    e_id = event.get_id
+    if e_id == ID_TransparentHint or
+        e_id == ID_VenetianBlindsHint or
+        e_id == ID_RectangleHint or
+        e_id == ID_NoHint
+      flags = @mgr.get_flags
+      flags &= ~Wx::AUI_MGR_TRANSPARENT_HINT
+      flags &= ~Wx::AUI_MGR_VENETIAN_BLINDS_HINT
+      flags &= ~Wx::AUI_MGR_RECTANGLE_HINT
+      @mgr.set_flags(flags)
+    end
+
+    flag = nil
+    case e_id
+    when ID_AllowFloating 
+      flag = Wx::AUI_MGR_ALLOW_FLOATING
+    when ID_TransparentDrag
+      flag = Wx::AUI_MGR_TRANSPARENT_DRAG
+    when ID_HintFade
+      flag = Wx::AUI_MGR_HINT_FADE 
+    when ID_NoVenetianFade
+      flag = Wx::AUI_MGR_NO_VENETIAN_BLINDS_FADE
+    when ID_AllowActivePane
+      flag = Wx::AUI_MGR_ALLOW_ACTIVE_PANE
+    when ID_TransparentHint
+      flag = Wx::AUI_MGR_TRANSPARENT_HINT
+    when ID_VenetianBlindsHint
+      flag = Wx::AUI_MGR_VENETIAN_BLINDS_HINT 
+    when ID_RectangleHint
+      flag = Wx::AUI_MGR_RECTANGLE_HINT
+    end
+    
+    if flag
+      @mgr.set_flags(@mgr.get_flags ^ flag)
+    end
+
+    @mgr.update
+  end
+
+  def on_notebook_flag(event)
+    e_id = event.get_id
+
+    if e_id == ID_NotebookNoCloseButton or
+        e_id == ID_NotebookCloseButton or
+        e_id == ID_NotebookCloseButtonAll or
+        e_id == ID_NotebookCloseButtonActive
+      @notebook_style &= ~( Wx::AUI_NB_CLOSE_BUTTON|
+                            Wx::AUI_NB_CLOSE_ON_ACTIVE_TAB|
+                            Wx::AUI_NB_CLOSE_ON_ALL_TABS )
+    end
+
+    case e_id
+    when ID_NotebookNoCloseButton
+      # nothing
+    when ID_NotebookCloseButton
+      @notebook_style |= Wx::AUI_NB_CLOSE_BUTTON
+    when ID_NotebookCloseButtonAll
+      @notebook_style |= Wx::AUI_NB_CLOSE_ON_ALL_TABS
+    when ID_NotebookCloseButtonActive
+      @notebook_style |= Wx::AUI_NB_CLOSE_ON_ACTIVE_TAB
+    end
+
+    if e_id == ID_NotebookAllowTabMove
+      @notebook_style ^= Wx::AUI_NB_TAB_MOVE
+    end
+
+    if e_id == ID_NotebookAllowTabExternalMove
+      @notebook_style ^= Wx::AUI_NB_TAB_EXTERNAL_MOVE
+    elsif e_id == ID_NotebookAllowTabSplit
+      @notebook_style ^= Wx::AUI_NB_TAB_SPLIT
+    elsif e_id == ID_NotebookWindowList
+      @notebook_style ^= Wx::AUI_NB_WINDOWLIST_BUTTON
+    elsif e_id == ID_NotebookScrollButtons
+      @notebook_style ^= Wx::AUI_NB_SCROLL_BUTTONS
+    elsif e_id == ID_NotebookTabFixedWidth
+      @notebook_style ^= Wx::AUI_NB_TAB_FIXED_WIDTH
+    end
+
+
+    @mgr.each_pane do | pane | 
+      maybe_nb = pane.get_window
+      next unless maybe_nb.kind_of?(Wx::AuiNotebook)
+      if e_id == ID_NotebookArtGloss
+        maybe_nb.set_art_provider(Wx::AuiDefaultTabArt.new)
+        @notebook_theme = 0
+      elsif e_id == ID_NotebookArtSimple
+        maybe_nb.set_art_provider(Wx::AuiSimpleTabArt.new)
+        @notebook_theme = 1
+      end
+
+      maybe_nb.set_window_style_flag(@notebook_style)
+      maybe_nb.refresh()
+    end
+  end
+
+  def on_update_ui(event)
+    flags = @mgr.get_flags
+    
+    case event.get_id
+    when ID_NotebookNoCloseButton
+      event.check( (@notebook_style & 
+                   ( Wx::AUI_NB_CLOSE_BUTTON|
+                     Wx::AUI_NB_CLOSE_ON_ALL_TABS|
+                     Wx::AUI_NB_CLOSE_ON_ACTIVE_TAB) ) != 0)
+    when ID_NotebookCloseButton
+      event.check((@notebook_style & Wx::AUI_NB_CLOSE_BUTTON) != 0)
+    when ID_NotebookCloseButtonAll
+      event.check((@notebook_style & Wx::AUI_NB_CLOSE_ON_ALL_TABS) != 0)
+    when ID_NotebookCloseButtonActive
+      event.check((@notebook_style & Wx::AUI_NB_CLOSE_ON_ACTIVE_TAB) != 0)
+    when ID_NotebookAllowTabSplit:
+        event.check((@notebook_style & Wx::AUI_NB_TAB_SPLIT) != 0)
+    when ID_NotebookAllowTabMove
+      event.check((@notebook_style & Wx::AUI_NB_TAB_MOVE) != 0)
+    when ID_NotebookAllowTabExternalMove
+      event.check((@notebook_style & Wx::AUI_NB_TAB_EXTERNAL_MOVE) != 0)
+    when ID_NotebookScrollButtons
+      event.check((@notebook_style & Wx::AUI_NB_SCROLL_BUTTONS) != 0)
+    when ID_NotebookWindowList
+      event.check((@notebook_style & Wx::AUI_NB_WINDOWLIST_BUTTON) != 0)
+    when ID_NotebookTabFixedWidth
+      event.check((@notebook_style & Wx::AUI_NB_TAB_FIXED_WIDTH) != 0)
+    when ID_NotebookArtGloss
+      event.check(@notebook_style == 0)
+    when ID_NotebookArtSimple
+      event.check(@notebook_style == 1)
+    end
+  end
+
+  def on_pane_close(event)
+#    if event.get_pane.get_name == "test10"
+      msg = "Are you sure you want to close/hide this pane?"
+      dlg = Wx::MessageDialog.new(self, msg, "Wx::AUI", Wx::YES_NO)
+      if dlg.show_modal != Wx::ID_YES
+        return event.veto
+      end
+#    end
+  end
+
+  def on_notebook_page_close(event)
+    notebook = event.get_event_object
+#    if notebook.get_page(event.get_selection).kind_of?(Wx::HtmlWindow)
+      msg = "Are you sure you want to close/hide this notebook page?"
+      dlg = Wx::MessageDialog.new(self, msg, "Wx::AUI", Wx::YES_NO)
+      if dlg.show_modal != Wx::ID_YES
+        event.veto
+      else
+        event.allow
+      end
+#    end
+  end
+
+  def get_start_position
+    origin = client_to_screen( Wx::Point.new(0, 0) )
+    return Wx::Point.new(origin.x + 20, origin.y + 20)
+  end
+
+  def on_exit
+    close(true)
+  end
+
+  def on_about
+    msg = "Expo-ui\n An GUI  for Expo (an experiment control framework)\n Adapted from the wxWidgets AUI Demo.\n WARNING this GUI is an experimental prototype.\n Contact: olivier.richard@imag.fr\n"
+    dlg = Wx::MessageDialog.new(self, msg, "Wx::AUI", Wx::OK)
+    dlg.show_modal
+  end
+
+  def create_text_ctrl(text = "")
+    if text.empty?
+      text = "This is a test text box"
+    end
+    Wx::TextCtrl.new( self, Wx::ID_ANY, text, 
+                      Wx::Point.new(0, 0), Wx::Size.new(150, 90),
+                      Wx::NO_BORDER|Wx::TE_MULTILINE)
+  end
+  
+  def create_tree_ctrl
+    tree  = Wx::TreeCtrl.new( self, Wx::ID_ANY,
+                              Wx::Point.new(0, 0), Wx::Size.new(160, 250),
+                              Wx::TR_DEFAULT_STYLE|Wx::NO_BORDER)
+
+    img_list = Wx::ImageList.new(16, 16, true, 2)
+    img_list.add( Wx::ArtProvider::get_bitmap( Wx::ART_FOLDER, 
+                                               Wx::ART_OTHER, 
+                                               Wx::Size.new(16, 16) ) )
+    img_list.add( Wx::ArtProvider::get_bitmap( Wx::ART_NORMAL_FILE, 
+                                               Wx::ART_OTHER, 
+                                               Wx::Size.new(16, 16) ) )
+    tree.set_image_list(img_list)
+    root = tree.add_root("All", 0)
+    tree.expand(root)
+    tree
+  end
+
+	def create_expe_ctrl
+		@expe_ctrl_view = ExpeCtrlView.new(self)
+		@expe_ctrl_view.expe_ctrl 
+	end
+
+	def create_task_list_pane(expe_id)
+		pi = Wx::AuiPaneInfo.new
+    pi.set_name("task_list_#{expe_id}").set_caption("Task List: #{expe_id}").right.show(false)
+    pi.set_layer(1).set_position(1).set_close_button.set_maximize_button
+		task_list = WxTaskList.new(self)
+    @mgr.add_pane(task_list, pi)
+		task_list
+	end
+
+	def create_expe_stdeo_pane(expe_id)
+		pi = Wx::AuiPaneInfo.new
+		pi.set_name("expe_stdeo_#{expe_id}").set_caption("Experiment's standard Error/Output: #{expe_id}").show(false)
+    pi.bottom.set_layer(1).set_position(1)
+#		expe_stdeo = WxExpeStdeo.new(self)
+		expe_stdeo = 	Wx::TextCtrl.new(self, Wx::ID_ANY, "Waiting for experiment ouputs", Wx::Point.new(0, 0), Wx::Size.new(150, 90),Wx::NO_BORDER|Wx::TE_MULTILINE)
+    @mgr.add_pane(expe_stdeo, pi)
+		expe_stdeo 
+	end
+
+	def create_expe_program(expe_id,program)
+#		expe_program = WxExpeProgram.new(self,program)
+		expe_program = WxExpeProgram.new(self,program)
+		@notebook.add_page(expe_program,expe_id)
+		expe_program
+	end
+
+
+  def create_notebook
+    # create the notebook off-window to avoid flicker
+    client_size = get_client_size
+
+    ctrl = Wx::AuiNotebook.new( self, Wx::ID_ANY,
+                                Wx::Point.new(client_size.x, client_size.y),
+                                Wx::Size.new(430, 200),
+                                @notebook_style)
+		
+
+			ctrl.add_page( Wx::TextCtrl.new( ctrl, Wx::ID_ANY, "Have good experiments",
+                                     Wx::DEFAULT_POSITION, Wx::DEFAULT_SIZE, 
+                                     Wx::TE_MULTILINE|Wx::NO_BORDER),
+                   "Welcome", false)
+
+#			ctrl.set_selection(0)
+
+			ctrl.evt_auinotebook_page_changed(ctrl.get_id()) do |event|
+			
+				puts "yoppoy"
+
+				index = ctrl.get_selection
+				expe_sel = nil
+				$expe_list.each do |expe_id,expe|
+					if  expe.view.notebook_index == index
+						expe_sel = expe
+						break
+					end				
+				end
+				expe_sel.view.show if !expe_sel.nil?
+			end
+
+    return ctrl
+  end
+
+end
+
+
+class ExpoUiApp < Wx::App
+		
+	# Get a guaranteed-unique id
+  THREAD_TIMER_ID = Wx::ID_HIGHEST + 1
+  def on_init
+    # Create a global application timer 
+    t = Wx::Timer.new(self, THREAD_TIMER_ID)
+    # When the timer "ticks", switch control to other ruby threads
+    evt_timer(THREAD_TIMER_ID) { Thread.pass }
+    # Start the timer to run every 1/40 second (25ms); higher values
+    # will make the other threads run more often, but will eventually
+    # degrade the responsiveness of the GUI.
+    t.start(25)
+
+    gui = ExpoGui.new( nil, Wx::ID_ANY, "Expo-ui",
+                          Wx::DEFAULT_POSITION,
+                          Wx::Size.new(1000, 600) )
+    set_top_window(gui)
+    gui.show
+
+		
+
+#		simple_frame = SimpleFrame.new(self)
+#		simple_frame.show(true)
+    return true
+  end
+end
+
+$expo_client = ExpoClient.new()
+$expo_client.start
+ExpoUiApp.new.main_loop()
+#expo_client.load_initial_experiment
+
+__END__
+
+<html><body>
+  <h3>Welcome to Expo-ui</h3>
+        <br/><b>Overview</b><br/>
+  <p>Expo-ui is a GUI for Experiment Control  Framework Expo .</p>
+  <p>WARNING this GUI is an experimental prototype.</p>
+  <p>Contact olivier.richard@imag.fr </p>
+</body></html>

@@ -1,0 +1,21 @@
+---
+default:
+ expo_server: 'localhost'
+experiments:
+-
+ name: 'hello'
+ desc: 'test'
+ file: 'test.rb'
+-
+ name: 'kastafior'
+ desc: 'broadcaster file based on Taktuk launcher'
+ file: 'kastafior.rb'
+-
+ name: 'taktuk'
+ desc: 'taktuk launcher test'
+ file: 'kastafior.rb'
+-
+ name: 'cigri'
+ desc: 'cigri demonstration'
+ file: 'kastafior.rb'
+

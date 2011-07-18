@@ -1,0 +1,18 @@
+--- !ruby/object:ResourceSet 
+properties: 
+  :name: toto
+resources: 
+- !ruby/object:Resource
+  properties:
+    :name: titi
+  type: :node
+- !ruby/object:ResourceSet 
+  properties: 
+    :name: tata
+  resources: 
+  - !ruby/object:Resource 
+    properties: 
+      :name: tutu
+    type: :node
+  type: :resource_set
+type: :resource_set

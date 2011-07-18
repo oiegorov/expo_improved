@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/expo/!svn/ver/13/old/trunk/gui/wx
+END
+expe_ctrl.xrc
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/expe_ctrl.xrc
+END
+expe.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/expe.yaml
+END
+expe_control.wxg
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/expe_control.wxg
+END
+expo-wx-client.rb
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/expo-wx-client.rb
+END
+progressbar.rb
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/progressbar.rb
+END
+expe_control.xrc
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/expe_control.xrc
+END
+extract_xml.rb
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/extract_xml.rb
+END
+README
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/README
+END
+expo-gui
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/expo-gui
+END
+expo-wx-widgets.rb
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/expo/!svn/ver/13/old/trunk/gui/wx/expo-wx-widgets.rb
+END

@@ -1,0 +1,143 @@
+K 25
+svn:wc:ra_dav:version-url
+V 26
+/svn/expo/!svn/ver/17/test
+END
+use_cases_1_4.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_4.rb
+END
+use_cases_1_5.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_5.rb
+END
+tc_expctrl_stand_alone.rb
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/expo/!svn/ver/17/test/tc_expctrl_stand_alone.rb
+END
+use_cases_1_6.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_6.rb
+END
+use_cases_2_5.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_2_5.rb
+END
+use_cases_1_7.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_7.rb
+END
+use_cases_2_6.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_2_6.rb
+END
+use_cases_1_8.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_8.rb
+END
+use_cases_1_9.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_9.rb
+END
+tc_rctrl_stand_alone.rb
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/expo/!svn/ver/17/test/tc_rctrl_stand_alone.rb
+END
+resource_set2.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/expo/!svn/ver/17/test/resource_set2.yaml
+END
+resource_set3.yaml
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/expo/!svn/ver/17/test/resource_set3.yaml
+END
+tc_resourceset.rb
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/expo/!svn/ver/17/test/tc_resourceset.rb
+END
+tc_heap.rb
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/expo/!svn/ver/17/test/tc_heap.rb
+END
+tc_resctrl.rb
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/expo/!svn/ver/17/test/tc_resctrl.rb
+END
+tc_expctrl.rb
+K 25
+svn:wc:ra_dav:version-url
+V 40
+/svn/expo/!svn/ver/17/test/tc_expctrl.rb
+END
+use_cases_1_0.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_0.rb
+END
+use_cases_1_1.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_1.rb
+END
+use_cases_2_0.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_2_0.rb
+END
+use_cases_1_2.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_2.rb
+END
+tc_resctrl_stand_alone.rb
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/expo/!svn/ver/17/test/tc_resctrl_stand_alone.rb
+END
+use_cases_1_3.rb
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/expo/!svn/ver/17/test/use_cases_1_3.rb
+END
+tc_rctrl.rb
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/expo/!svn/ver/17/test/tc_rctrl.rb
+END

@@ -1,0 +1,16 @@
+#!/usr/bin/ruby -w
+require 'cmdctrl'
+
+cmd = ARGV.join(" ")
+c = CmdCtrl::Commands::CommandBufferer::new(CmdCtrl::Commands::InteractiveCommand::new( cmd ))
+c.on_output_stdout do |text, cmd|
+  STDOUT.print text
+  STDOUT.flush
+end
+c.on_output_stderr do |text, cmd|
+  STDERR.print text
+  STDERR.flush
+end
+c.run
+c.wait
+exit c.status

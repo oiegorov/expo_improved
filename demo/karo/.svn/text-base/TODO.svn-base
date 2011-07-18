@@ -1,0 +1,24 @@
+TODO:
+
+README
+doc
+traitement des noeuds (detection des noeuds malade plusieurs variante, pls partitions ?)
+inversion des parametres des ptask
+option taktuk (connector et argument)
+
+POUR PLUS TARD
+clarifer utilisation de  step comme name_step
+extraction de l'histoire d'un noeud
+
+DONE:
+
+ajout variante expo.rb
+ptaskfoo :pour les tests rset_good/rset_bad
+mixin monitor @resource_sets, @history, @active_threads
+génération des graphes d'exection
+traitement on_error
+traitement du nb_retry
+fusion de resource set (des noeuds précedemment malade rejoigne le gros de la troupei, ) [PAS BESOIN]
+ajout trace/histoire
+ajout ResourceSet
+mixin monitor @steps ? [PAS BESOIN]

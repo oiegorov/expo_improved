@@ -1,0 +1,42 @@
+---
+title: Expo homepage
+in_menu: true
+routed_title: Expo homepage
+sort_info: 1
+---
+## Expo
+
+Expo is an experiment engine for distributed platforms. It aims at
+simplifying the experimental process on such platforms.  In order to meet
+this goal several approach are used in expo.
+
+## Domain Specific Language
+
+Expo proposes a DSL (Domain Specific Language) derived from Ruby and
+adapted to the management of experiment. It is based on several
+abstractions like tasks, tasksets, resources and resourcesets. These
+abstractions, combined with the expressiveness of ruby allows for concise
+yet powerful experiment descriptions.
+
+## Decoupled client and server execution
+
+Expo is built from two distinct parts: a client and a server. The client is
+responsible for translating the Expo script into commands the server will
+execute. This dichotomy can help save a lot of time. Indeed, an experiment
+script containing an error might abort the client, but the commands already
+launched on the server, and the results gathered are not lost.
+
+## Native logging and archiving capabilities
+
+In order to maximise the reproducibility and the analysis of experiments
+the Expo server comes with native logging capabilities. Standard outputs,
+inputs and errors are logged into memory. Those data can then be archived
+on disk, for longer keeping or in order to free memory. Start date, end
+date, status of each commands are also logged.
+
+## Interface with resource brokers
+
+Expo was built in the context of Grid'5000. It thus natively supports OAR
+and OAR2, the batch schedulers of G5K. This interface is done through a
+driver system. Adapting to a new batch scheduler only consist in
+developing the appropriate driver.

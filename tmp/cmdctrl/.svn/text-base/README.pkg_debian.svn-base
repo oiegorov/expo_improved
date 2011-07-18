@@ -1,0 +1,9 @@
+rake package
+tar xzf pkg/cmdctrl-0.1.tgz
+cd cmdctrl-0.1
+cp -r ../debian-pkg/debian .
+dpkg-buildpackage -rfakeroot -us -uc
+cd ..
+ls
+
+* Changer de version: juste modifier debian-pkg/debian/changelog

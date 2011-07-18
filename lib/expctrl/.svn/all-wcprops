@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 33
+/svn/expo/!svn/ver/17/lib/expctrl
+END
+expctrl_expctrlclient.rb
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/expo/!svn/ver/17/lib/expctrl/expctrl_expctrlclient.rb
+END
+expctrl_expctrlresponse.rb
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/expo/!svn/ver/17/lib/expctrl/expctrl_expctrlresponse.rb
+END
+expctrl_service.rb
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/expo/!svn/ver/17/lib/expctrl/expctrl_service.rb
+END
+expctrl_expctrlexperiment.rb
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/expo/!svn/ver/17/lib/expctrl/expctrl_expctrlexperiment.rb
+END
+expctrl_structures.rb
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/expo/!svn/ver/17/lib/expctrl/expctrl_structures.rb
+END

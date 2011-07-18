@@ -1,0 +1,27 @@
+Source: librctrl-ruby
+Section: interpreters
+Priority: optional
+Maintainer: Lucas Nussbaum <lucas.nussbaum@imag.fr>
+Build-Depends: debhelper (>= 5), ruby1.8, ruby1.8-dev, cdbs (>= 0.4.32ubuntu13), ruby-pkg-tools (>= 0.8), rdoc, graphviz
+Standards-Version: 3.6.2.2
+
+Package: librctrl-ruby
+Architecture: all
+Depends: librctrl-ruby1.8
+Suggests: librctrl-ruby-doc
+Description: TODO
+ TODO
+ .
+ Homepage: http://TODO
+
+Package: librctrl-ruby1.8
+Architecture: all
+Suggests: librctrl-ruby-doc
+Depends: ${shlibs:Depends}, libcmdctrl-ruby
+Description: TODO
+  TODO
+
+Package: librctrl-ruby-doc
+Architecture: all
+Description: TODO
+ TODO
