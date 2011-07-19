@@ -1,5 +1,8 @@
 #!/usr/bin/ruby
 
+#require rubygems explicitely to ease the debugging RUBYOPTS=""
+require 'rubygems'
+
 require 'optparse'
 require 'yaml'
 require 'resourceset'
@@ -28,7 +31,7 @@ $rest = opts.parse(ARGV)
 
 require 'expctrl'
 require 'taktuk_wrapper'
-require 'taktuk2yaml'
+#require 'taktuk2yaml'
 
 #----here we initialize some instance vars of $client
 $client = ExpCtrlClient::new("localhost:#{port}")
