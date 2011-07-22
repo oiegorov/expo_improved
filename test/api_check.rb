@@ -1,3 +1,9 @@
 require 'g5k_api'
+require 'pp'
 
-puts "checking Grid5000 API!"
+g5k_init :site => ["lille", "bordeaux"]
+nodes = g5k_run
+
+puts "\n\n"
+puts "reserved nodes: "
+pp nodes

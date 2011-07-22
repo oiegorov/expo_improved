@@ -155,6 +155,7 @@ OpenReservationResponse	lib/resctrl/resctrl_resctrlresponse.rb	/^class OpenReser
 PRunnerTest	tmp/cmdctrl/test/tc_prunner.rb	/^class PRunnerTest < Test::Unit::TestCase$/;"	c
 PackageSelectionItem	setup.rb	/^class PackageSelectionItem < ConfigItem$/;"	c
 PackageSelectionItem	tmp/cmdctrl/setup.rb	/^class PackageSelectionItem < ConfigItem$/;"	c
+Parallel	lib/g5k_parallel.rb	/^class Parallel$/;"	c
 ParallelRunner	lib/cmdctrl/prunner.rb	/^    def ParallelRunner::rungroup(cmds, window = nil)$/;"	f	class:CmdCtrl.ParallelRunner
 ParallelRunner	lib/cmdctrl/prunner.rb	/^  class ParallelRunner$/;"	c	class:CmdCtrl
 ParallelRunner	tmp/cmdctrl/lib/cmdctrl/prunner.rb	/^    def ParallelRunner::rungroup(cmds, window = nil)$/;"	f	class:CmdCtrl.ParallelRunner
@@ -249,6 +250,7 @@ _akadeploy	lib/expo_g5k.rb	/^def _akadeploy( nodes, params )$/;"	f	class:Expo
 _kadeploy	lib/expo_g5k.rb	/^def _kadeploy( nodes, params )$/;"	f	class:Expo.kadeploy
 action_list	old/trunk/gui/wx/expo-wx-widgets.rb	/^	def action_list$/;"	f	class:WxTaskList
 add	bin/expo-server.rb	/^def add(*args)$/;"	f	class:ActionList
+add	lib/g5k_parallel.rb	/^  def add(env, &block)$/;"	f	class:Parallel
 add	setup.rb	/^  def add(item)$/;"	f	class:ConfigTable_class
 add	tmp/cmdctrl/setup.rb	/^  def add(item)$/;"	f	class:ConfigTable_class
 add_bool_config	setup.rb	/^  def add_bool_config(name, default, desc)$/;"	f	class:MetaConfigAPI
@@ -534,6 +536,9 @@ first	lib/rctrl/rctrl_heap.rb	/^  def first()$/;"	f	class:Expo.Heap
 first	lib/resourceset.rb	/^        def first ( type=nil )$/;"	f	class:Expo.ResourceSet
 flatten	lib/resourceset.rb	/^        def flatten( type = nil )$/;"	f	class:Expo.ResourceSet
 flatten!	lib/resourceset.rb	/^        def flatten! (type = nil )$/;"	f	class:Expo.ResourceSet
+g5k_init	lib/g5k_api.rb	/^def g5k_init(experim_params)$/;"	f
+g5k_reserve	lib/g5k_api.rb	/^def g5k_reserve(options)$/;"	f
+g5k_run	lib/g5k_api.rb	/^def g5k_run$/;"	f
 gateway	lib/resourceset.rb	/^	def gateway$/;"	f	class:Expo.Resource
 generic_command	lib/rctrl/rctrl_service.rb	/^  def generic_command(params)$/;"	f	class:Expo.RCtrlService
 get_action_status	bin/expo-server.rb	/^	def get_action_status(args)$/;"	f	class:FifoExpoServer
@@ -635,6 +640,7 @@ initialize	lib/expctrl/expctrl_expctrlclient.rb	/^ 	def initialize(server=nil)$/
 initialize	lib/expctrl/expctrl_expctrlclient.rb	/^        def initialize(server)$/;"	f	class:Expo.ExpCtrlClientNoneDriver
 initialize	lib/expctrl/expctrl_expctrlexperiment.rb	/^  def initialize$/;"	f	class:Expo.ExpCtrlExperiment
 initialize	lib/expctrl/expctrl_service.rb	/^  def initialize(*args)$/;"	f	class:Expo.ExpCtrlService
+initialize	lib/g5k_parallel.rb	/^  def initialize(options = {})$/;"	f	class:Parallel
 initialize	lib/rctrl/rctrl_delayedcommandscheduler.rb	/^  def initialize()$/;"	f	class:Expo.DelayedCommandScheduler
 initialize	lib/rctrl/rctrl_heap.rb	/^  def initialize(&comparator)$/;"	f	class:Expo.Heap
 initialize	lib/rctrl/rctrl_rctrlclient.rb	/^	def initialize(server)$/;"	f	class:Expo.RCtrlClientDrbDriver
@@ -735,6 +741,7 @@ load_initial_experiment	old/trunk/gui/wx/expo-wx-client.rb	/^	def load_initial_e
 log	demo/karo/karo.rb	/^	def log(str)$/;"	f	class:Logger
 lookup	setup.rb	/^  def lookup(name)$/;"	f	class:ConfigTable_class
 lookup	tmp/cmdctrl/setup.rb	/^  def lookup(name)$/;"	f	class:ConfigTable_class
+loop!	lib/g5k_parallel.rb	/^  def loop!$/;"	f	class:Parallel
 make	setup.rb	/^  def make(task = '')$/;"	f	class:FileOperations
 make	tmp/cmdctrl/setup.rb	/^  def make(task = '')$/;"	f	class:FileOperations
 make_delete_reservation_command_line	lib/oargrid2_reservation.rb	/^  def make_delete_reservation_command_line(id)$/;"	f	class:Expo.Oargrid2Reservation
@@ -797,6 +804,7 @@ no_harm?	tmp/cmdctrl/setup.rb	/^  def no_harm?$/;"	f	class:ToplevelInstaller.Top
 no_harm?	tmp/cmdctrl/setup.rb	/^  def no_harm?$/;"	f	class:ToplevelInstaller.ToplevelInstallerMulti.declare_packages
 node_file	lib/resourceset.rb	/^        def node_file( update=false )$/;"	f	class:Expo.ResourceSet.each_slice.each.uniq!
 nodes	lib/expctrl/expctrl_expctrlclient.rb	/^  def nodes( nodes_name=nil, nds=nil )$/;"	f	class:Expo.ExpCtrlClient
+oar_walltime	lib/g5k_api.rb	/^def oar_walltime(env)$/;"	f
 oargrid_gw	lib/expo_g5k.rb	/^def oargrid_gw$/;"	f	class:Expo
 oargridconnect	lib/expo_g5k.rb	/^def oargridconnect(id)$/;"	f	class:Expo
 oargridsub	lib/expo_g5k.rb	/^def oargridsub(params)$/;"	f	class:Expo
@@ -841,6 +849,7 @@ open_named_pipes	bin/expo-server.rb	/^	def open_named_pipes$/;"	f	class:FifoExpo
 open_reservation	lib/expctrl/expctrl_expctrlclient.rb	/^  def open_reservation( type, id )$/;"	f	class:Expo.ExpCtrlClient
 open_reservation	lib/resctrl/resctrl_service.rb	/^  def open_reservation( type, id )$/;"	f	class:Expo.ResCtrlService
 open_unix_socket	bin/expo-server.rb	/^	def open_unix_socket$/;"	f	class:FifoExpoServer
+parallel	lib/g5k_api.rb	/^def parallel(options = {}, &block)$/;"	f
 parallel_section	bin/#expo.rb#	/^def parallel_section(&block)$/;"	f
 parallel_section	bin/expo-server.rb	/^def parallel_section(&block)$/;"	f
 parallel_section	bin/expo.rb	/^def parallel_section(&block)$/;"	f
@@ -1050,6 +1059,7 @@ status	tmp/cmdctrl/lib/cmdctrl/commands/interactive_command.rb	/^      def statu
 step	demo/karo/karo.rb	/^	def step(name, options=nil)$/;"	f	class:Karo
 step	demo/karo/karo.rb	/^def step(name,options=nil)$/;"	f
 stop	old/trunk/gui/wx/expo-wx-client.rb	/^	def stop(expe_id)$/;"	f	class:ExpoClient
+synchronize	lib/g5k_parallel.rb	/^  def synchronize(&block)$/;"	f	class:Parallel
 task	bin/#expo.rb#	/^def task(location, task)$/;"	f
 task	bin/expo-server.rb	/^def task(location, task)$/;"	f
 task	bin/expo.rb	/^def task(location, task)$/;"	f
@@ -1229,6 +1239,7 @@ try_run_hook	tmp/cmdctrl/setup.rb	/^  def try_run_hook(fname)$/;"	f	class:HookUt
 uniq	lib/resourceset.rb	/^        def uniq$/;"	f	class:Expo.ResourceSet.each_slice.each
 uniq!	lib/resourceset.rb	/^        def uniq!$/;"	f	class:Expo.ResourceSet.each_slice.each
 update_expe_state	old/trunk/gui/wx/expo-wx-widgets.rb	/^	def update_expe_state$/;"	f	class:ExpeCtrlView
+valid_job_key?	lib/g5k_api.rb	/^def valid_job_key?(k)                                                                                                                 $/;"	f
 value	setup.rb	/^  def value$/;"	f	class:ConfigItem
 value	tmp/cmdctrl/setup.rb	/^  def value$/;"	f	class:ConfigItem
 value_config?	setup.rb	/^  def value_config?(name)$/;"	f	class:MetaConfigAPI
@@ -1247,6 +1258,7 @@ wait	tmp/cmdctrl/lib/cmdctrl/commands/command.rb	/^      def wait$/;"	f	class:Cm
 wait	tmp/cmdctrl/lib/cmdctrl/commands/command_bufferer.rb	/^      def wait$/;"	f	class:CmdCtrl.Commands.CommandBufferer
 wait	tmp/cmdctrl/lib/cmdctrl/commands/interactive_command.rb	/^      def wait$/;"	f	class:CmdCtrl.Commands.InteractiveCommand
 wait	tmp/cmdctrl/lib/cmdctrl/prunner.rb	/^    def wait$/;"	f	class:CmdCtrl.ParallelRunner
+wait!	lib/g5k_parallel.rb	/^  def wait!$/;"	f	class:Parallel
 wait_no_hang	lib/cmdctrl/commands/command.rb	/^      def wait_no_hang$/;"	f	class:CmdCtrl.Commands.Command
 wait_no_hang	lib/cmdctrl/commands/interactive_command.rb	/^      def wait_no_hang$/;"	f	class:CmdCtrl.Commands.InteractiveCommand
 wait_no_hang	tmp/cmdctrl/lib/cmdctrl/commands/command.rb	/^      def wait_no_hang$/;"	f	class:CmdCtrl.Commands.Command
