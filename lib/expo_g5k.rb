@@ -52,6 +52,7 @@ require "#{$reservation_type}_structures"
 
 def extract_resources(result)
   if($reservation_type == "oargrid2") then
+
     result["resources"].each { |key,value|
       #----key - it's the name of cluster, value - all the nodes
       #----reserved on this cluster
@@ -221,6 +222,7 @@ def _kadeploy( nodes, params )
   tw.run
   puts YAML.dump({'hosts'=>tw.hosts,'connectors'=>tw.connectors,'errors'=>tw.errors,'infos'=>tw.infos})
   "
+  
   puts "deploying : " + n.inspect
   command_result = $client.ruby_asynchronous_command(cmd)
   $client.command_wait(command_result["command_number"],1)

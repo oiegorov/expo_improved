@@ -19,8 +19,10 @@ require 'thread'
   :site => "lille",
   :resources => "nodes=1",
   :environment => "lenny-x64-base",
-  :walltime => 100,
-  :no_deploy => true,
+  :types => ["allow_classic_ssh"],
+  :name => "to_try",
+  :walltime => 300,
+  :no_deploy => false,
   :no_submit => false,
   :no_cleanup => false,
   :polling_frequency => 10,
@@ -28,13 +30,14 @@ require 'thread'
 }
 
 
-
-
 def g5k_init(experim_params)
   # make logger easier to access
   @logger = @options[:logger]
   
+  # DO WE NEED IT???
   @nodes = []
+
+  @resources = {}
 
   @jobs = []
   @mutex = Mutex.new
@@ -70,9 +73,17 @@ def g5k_run
   end
 
   @options[:parallel_reserve].loop!
+ 
+  #puts "\n\nnew resources: " 
+  #pp @resources
 
-  #return all the reserved nodes
-  @nodes
+
+  #puts "all the resources (ready to be converted to $all)"
+  #pp @resources
+  #
+  # We call the method from module Expo
+  Expo.extract_resources_new(@resources)
+
 end
 
 # reserve the remote nodes with parameters specified in @options
@@ -83,6 +94,7 @@ def g5k_reserve(options)
   # payload is a hash contatining all the params of the job to submit
   payload = {
     :command => "sleep #{@options[:walltime]}"
+    #:command => "sleep 1"
     #:command => "uname -a"
   }.merge(options.reject { |k,v| !valid_job_key?(k) }) #sort out valid payload
   
@@ -94,6 +106,7 @@ def g5k_reserve(options)
   job = synchronize {
     @connection.root.sites[options[:site].to_sym].jobs.submit(payload)
   }
+
 
   if job.nil?
     if options[:no_submit]
@@ -127,19 +140,91 @@ def g5k_reserve(options)
 
     logger.info "[#{options[:site]}] Job is running: #{job.inspect}"
 
+    # DO WE NEED THIS??
     synchronize {
       job['assigned_nodes'].each {|node|
           @nodes.push(node)
       }
     }
+    # 
 
-    #options[:job] = job
-    options
+    subhash = convert_to_resource(job, options[:site])
+    synchronize {
+      @resources.merge!(subhash)
+    }
   end
 
 end
 
+def convert_to_resource(job, site)
 
+  #gateway = "frontend."+site+".grid5000.fr"
+  
+  job_name = job['name']
+  job_nodes = job['assigned_nodes']
+  # job_id will be the same for all the clusters of one site
+  job_id = job['uid']
+
+  clusters = []
+
+  regexp = /(\w*)-\w*/
+  job_nodes.each { |node|
+    cl = regexp.match(node)
+    clusters.push(cl[1])
+  }
+
+  clusters.uniq!
+
+  # will contain hash like
+  # {
+  #   "paradent" => {
+  #     345212 => {
+  #       "name" => "job_name",
+  #       "nodes" => [ "paradent-1", "paradent-12"
+  #     }
+  #   }
+  #   "parapluie" => {
+  #     345212 => ...
+  clusters_hash = {} 
+
+  clusters.each { |cluster|
+    #first sub-hash 
+    uid_hash = {}
+    #second sub-hash
+    nodes_hash = {}
+
+    nodes_hash["name"] = job_name 
+    #nodes_hash["gateway"] = gateway 
+
+    job_nodes.each { |node|
+
+      #sort out the cluster to which this node belongs
+      if node =~ /#{cluster}\w*/
+
+        #if there are already nodes in this cluster - add in array
+        if nodes_hash.has_key?("nodes")
+          #nodes_array = [ nodes_hash["nodes"] ]
+          nodes_hash["nodes"].push(node)
+
+        #if this node is the first in this cluster - create an array
+        #of nodes with this node and add the array to hash
+        else
+          nodes_array = []
+          nodes_array.push(node)
+          nodes_hash["nodes"] = nodes_array
+        end 
+      end 
+    }
+
+    uid_hash[job_id] = nodes_hash
+    if !(clusters_hash.has_key?(cluster))
+      clusters_hash[cluster] = uid_hash
+    end 
+
+  }
+   
+  clusters_hash
+end
 
 # convert the walltime in seconds into oar-style walltime
 # 
@@ -225,3 +310,47 @@ else
   read or is not a file" 
   exit(1)
 end
+
+module Expo
+
+# put reserved resources into expo's $all ResourceSet
+#
+def self.extract_resources_new(result)
+    result.each { |key,value|
+      # { "cluster" => {...} }
+      cluster = key
+      value.each { |key,value|
+        # { "job_id" => {...} }
+        jobid = key
+        resource_set = ResourceSet::new
+        resource_set.properties[:id] = jobid
+        resource_set.properties[:alias] = cluster
+
+        value.each { |key,value|
+          # { "name" => "...", "gateway" => "...", "nodes" => "...", 
+          case key
+          when "name"
+            resource_set.name = value
+          #when "gateway"
+          #  resource_set.properties[:gateway] = value
+          when "nodes"
+            value.each { |node|
+              resource = Resource::new(:node, nil, node)
+              # here we must construct gateway's name in place
+              gw = /\w*\.(\w+)\.\w*/.match(node) 
+              gateway = "frontend."+gw[1]+".grid5000.fr"
+              resource.properties[:gateway] = gateway
+              resource_set.properties[:gateway] = gateway
+              resource_set.push(resource)
+            }
+          end
+        }
+        #----so we put in $all a hash of all reserved nodes (in all
+        #----clusters)
+        $all.push(resource_set)
+      }
+    }
+end 
+
+end # Expo
+

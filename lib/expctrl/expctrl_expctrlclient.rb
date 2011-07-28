@@ -85,7 +85,6 @@ class ExpCtrlClient
 		connect = false
 		i = 1
 
-    #----as $POLLING==false we don't go inside this loop
 		while !connect and $POLLING
 			begin
 				response =@expctrl_client.ruby_command("puts 'hello'")
@@ -98,7 +97,6 @@ class ExpCtrlClient
 				raise "Connection to Server Error: " + $!  if i > 60
 			end
 		end
-
     if $RMI == 'none'
             @client = @expctrl_client
     else

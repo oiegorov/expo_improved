@@ -1,6 +1,7 @@
 require 'expo_g5k'
+require 'pp'
 
-oargridsub :res => "edel:rdef=\"/nodes=1\",capricorne:rdef=\"/nodes=1\""
+oargridsub :res => "capricorne:rdef=\"/nodes=1\",paradent:rdef=\"/nodes=1\""
 
 check $all
 
