@@ -19,16 +19,17 @@ require 'thread'
   :site => "lille",
   :resources => "nodes=1",
   :environment => "lenny-x64-base",
-  :types => ["allow_classic_ssh"],
+  :types => ["allow_classic_ssh", "deploy"],
   :name => "to_try",
   :walltime => 300,
-  :no_deploy => false,
+  :deploy => false,
   :no_submit => false,
   :no_cleanup => false,
   :polling_frequency => 10,
-  :submission_timeout => 5*60 #time we wait till state of the job is 'running'
+  :submission_timeout => 5*60, #time we wait till state of the job is 'running'
+  :deployment_timeout => 15*60,
+  :deployment_min_threshold => 100/100,
 }
-
 
 def g5k_init(experim_params)
   # make logger easier to access
@@ -40,6 +41,7 @@ def g5k_init(experim_params)
   @resources = {}
 
   @jobs = []
+  @deployments = []
   @mutex = Mutex.new
 
   experim_params.each { |attribute, value|
@@ -47,6 +49,7 @@ def g5k_init(experim_params)
   }
 end
 
+# run reservation and deployment
 def g5k_run
 
   # where to reserve?
@@ -63,26 +66,82 @@ def g5k_run
     @sites = [@options[:site]].flatten
   end
 
+  # array of resources for each site in @sites
+  @res = [@options[:resources]].flatten
+
   @options[:parallel_reserve] = parallel
 
   # launch parallel reservations on all the @options[:site]
-  @sites.each do |uid|
-    @options[:parallel_reserve].add(@options.merge(:site => uid)) do |env|
+  for i in 1..@sites.length
+    @options[:parallel_reserve].add(@options.merge(:site => @sites[i-1], :resources => @res[i-1])) do |env|
       g5k_reserve(env)
     end
   end
 
   @options[:parallel_reserve].loop!
- 
-  #puts "\n\nnew resources: " 
-  #pp @resources
 
 
-  #puts "all the resources (ready to be converted to $all)"
-  #pp @resources
   #
   # We call the method from module Expo
+  # to construct $all ResourceSet
   Expo.extract_resources_new(@resources)
+
+
+  #------------DEPLOYMENT STAGE--------------------------------
+  if @options[:deploy]
+
+    # prepare the environment hash
+    env_hash = {}
+    @options[:environment].each { |env, nodes_num|
+      env_hash[env] = []
+
+      nodes_num.times {
+        node_name = $all.delete_first($all.first(:node)).properties[:name]
+        env_hash[env].push(node_name)
+      }
+    }
+
+
+    puts "---------------------BEFORE THE DEPLOYMENT---------------------"
+    puts "env_hash:"
+    pp env_hash
+    puts "options:"
+    pp @options
+
+
+    # launch parallel deployments for each environment
+
+    @options[:site].each { |site|
+      
+      env_hash.each { |environment, nodes|
+        
+        @options[:environment] = environment
+        @options[:nodes] = nodes.find_all { |node|
+          node =~ /\S*.#{site}.\w*/
+        }
+
+        puts "-----------nodes to deploy:"
+        pp @options[:nodes]
+
+        if not @options[:nodes].empty?
+          @options[:parallel_deploy] = parallel
+
+          @options[:parallel_deploy].add(@options.merge(:site => site)) { |env|
+            g5k_deploy(env)
+          }
+        end
+      }
+    }
+
+    @options[:parallel_deploy].loop!
+    
+  end
+
+  unless @options[:no_cleanup]
+    @logger.info "Launching cleanup procedure (pass the --no-cleanup flag to avoid this)..."
+    cleanup
+  end
+
 
 end
 
@@ -155,6 +214,76 @@ def g5k_reserve(options)
   end
 
 end
+
+def g5k_deploy(env)
+
+  logger = @logger
+
+  env[:nodes] = [env[:nodes]].flatten.sort
+  logger.info "[#{env[:site]}] Launching deployment [no-deploy=#{env[:no_deploy].inspect}]..."
+=begin
+  if env[:no_deploy]
+    # attempts to find the latest deployment on the same nodes
+    deployment = connection.root.sites[env[:site].to_sym].deployments(
+      :query => {:reverse => true}, :reload => true
+    ).find{ |d|
+      d['nodes'].sort == env[:nodes] &&
+      d['user_uid'] == env[:user] &&
+      d['created_at'] >= env[:job]['started_at'] &&
+      d['created_at'] < env[:job]['started_at']+env[:walltime]
+    }
+  else
+=end
+
+  tamp_hash = {
+    :nodes => env[:nodes],
+    #:notifications => env[:notifications],
+    :environment => env[:environment],
+    :key => key_for_deployment(env)
+  }.merge(env.reject{ |k,v| !valid_deployment_key?(k) })
+  
+  pp tamp_hash
+
+
+  deployment = @connection.root.sites[env[:site].to_sym].deployments.submit({
+    :nodes => env[:nodes],
+    #:notifications => env[:notifications],
+    :environment => env[:environment],
+    :key => key_for_deployment(env)
+  }.merge(env.reject{ |k,v| !valid_deployment_key?(k) }))
+
+  if deployment.nil?
+      logger.error "[#{env[:site]}] Cannot submit the deployment."
+      nil
+  else
+    deployment.reload
+    synchronize { @deployments.push(deployment) }
+
+    logger.info "[#{env[:site]}] Got the following deployment: #{deployment.inspect}"
+    logger.info "[#{env[:site]}] Waiting for termination of deployment ##{deployment['uid']} in #{deployment.parent['uid']}..."
+
+    Timeout.timeout(env[:deployment_timeout]) do
+      while deployment.reload['status'] == 'processing'
+        sleep env[:polling_frequency]
+      end
+    end
+
+    if deployment_ok?(deployment, env)
+      logger.info "[#{env[:site]}] Deployment is terminated: #{deployment.inspect}"
+      env[:deployment] = deployment
+      yield env if block_given?
+      env
+    else
+      # Retry
+      synchronize { @deployments.delete(deployment) }
+      logger.error "[#{env[:site]}] Deployment failed: #{deployment.inspect}"
+    end
+  end
+end
+
+
+
+
 
 def convert_to_resource(job, site)
 
@@ -244,6 +373,69 @@ def valid_job_key?(k)
   [:resources, :reservation, :command, :directory, :properties, :types, :queue, :name, :project, :notifications].include?(k)
 end
 
+# Used to filter out keys from environment hash when submitting a deployment.
+# @return [Boolean] true if <tt>k</tt> is a valid deployment attribute. Otherwise false.
+def valid_deployment_key?(k)
+  [:key, :environment, :notifications, :nodes, :version, :block_device, :partition_number, :vlan, :reformat_tmp, :disable_disk_partitioning, :disable_bootloader_install, :ignore_nodes_deploying].include?(k)
+end
+
+# Returns true if the deployment is not in an error state
+# AND the number of correctly deployed nodes is greater or
+# equal than <tt>env[:deployment_min_threshold]</tt> variable
+def deployment_ok?(deployment, env = {})
+  return false if deployment.nil?
+  return false if ["canceled", "error"].include? deployment['status']
+  nodes_ok = deployment['result'].values.count{|v|
+    v['state'] == 'OK'
+  } rescue 0
+  nodes_ok.to_f/deployment['nodes'].length >= env[:deployment_min_threshold]
+end
+
+# Returns a valid key for the deployment
+# If the public_key points to a file, read it
+# If the public_key is a URI, fetch it
+def key_for_deployment(env)
+  env[:public_key] = keychain(:public)
+  uri = URI.parse(env[:public_key])
+  case uri
+  when URI::HTTP, URI::HTTPS
+    connection.get(uri.to_s).body
+  else
+    File.read(env[:public_key])
+  end
+end
+
+# Finds the first SSH key that has both public and private parts in the <tt>~/.ssh</tt> directory.
+# @return [Array<String,String>] the public_key_path and private_key_path if <tt>key_type</tt> is <tt>nil</tt>.
+# @return [String] the public key if <tt>key_type=:public</tt>, or the private key if <tt>key_type=:private</tt>.
+def keychain(key_type = nil)
+  public_key = nil
+  private_key = nil
+  Dir[File.expand_path("~/.ssh/*.pub")].each do |file|
+    public_key = file
+    private_key = File.join(
+      File.dirname(public_key),
+      File.basename(public_key, ".pub")
+    )
+    if File.exist?(private_key) && File.readable?(private_key)
+      break
+    else
+      private_key = nil
+    end
+  end
+  case key_type
+  when :public
+    public_key
+  when :private
+    private_key
+  else
+    [public_key, private_key]
+  end
+end
+
+
+
+
 # Primite that returns a new Parallel object.  <tt>Parallel#loop!</tt>
 # must be explicitly called to wait for the threads within the
 # <tt>Parallel</tt> object.
@@ -295,6 +487,26 @@ def how_many?(options = {})
   count
 end
 
+def cleanup( job = nil, deployment = nil)
+  synchronize {
+    logger = @logger
+
+    if job.nil? && deployment.nil?
+      logger.info "Cleaning up all jobs and deployments..."
+      @deployments.each{ |d| d.delete }.clear
+      @jobs.each{ |j| j.delete }.clear
+    else
+      unless deployment.nil?
+        logger.info "Cleaning up deployment##{deployment['uid']}..."
+        @deployments.delete(deployment) && deployment.delete
+      end
+      unless job.nil?
+        logger.info "Cleaning up job##{job['uid']}..."
+        @jobs.delete(job) && job.delete
+      end
+    end
+  }
+end
 
 if File.exist?(@options[:restfully_config]) && 
     File.readable?(@options[:restfully_config]) &&
