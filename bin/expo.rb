@@ -9,6 +9,8 @@ require 'resourceset'
 require 'taskset'
 require 'thread'
 
+require 'g5k_api'
+
 port = 15783
 
 include Expo
@@ -95,8 +97,8 @@ def check( nodes )
   tree = YAML::load( result["stdout"] )
 
   #----for debugging
-  #puts "dates :"
-  #puts result["stdout"];
+  puts "dates :"
+  puts result["stdout"];
   
   puts "Failing nodes :"
   tree["connectors"].each_value { |error|
@@ -275,4 +277,5 @@ end
 
 load($rest.last)
 
+cleanup
 $client.close_experiment

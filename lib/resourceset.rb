@@ -208,7 +208,7 @@ class ResourceSet < Resource
                 return res
         end
 
-        def delete_if(block)
+        def delete_if(&block)
                 @resources.each_index { |i|
                         if block.call(@resources[i]) then
                                 @resources.delete_at(i)
