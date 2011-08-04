@@ -22,15 +22,15 @@ require 'thread'
   :types => ["allow_classic_ssh"], #should be overwritten by "deploy" in case of deployment
   :name => "to_try", #the name of experiment
   :walltime => 3600,
-  :deploy => false,
   :no_submit => false,
   #do we need it??
   :no_cleanup => false,
   #
   :polling_frequency => 10,
+  :deployment_max_attempts => 1, # we will try to redeploy once if deployment fails
   :submission_timeout => 5*60, #time we wait till state of the job is 'running'
   :deployment_timeout => 15*60,
-  :deployment_min_threshold => 100/100,
+  :deployment_min_threshold => 100/100
 }
 
 # create a connection to Grid5000 API in Restfully way
@@ -102,30 +102,54 @@ def g5k_run
   # wait till all the reservations complete
   @options[:parallel_reserve].loop!
 
+
   #
   # construct $all ResourceSet
   Expo.extract_resources_new(@resources)
 
   #------------DEPLOYMENT STAGE--------------------------------
-  if @options[:deploy]
+  if @options[:types].include?("deploy")
 
     # create the environment hash: {"environment_1" => ["node_1", ..], ...}
     env_hash = {}
-    all_copy = $all.copy
+    #all_copy = $all.copy
+    all_2 = ResourceSet::new
+    i = 0
+
     @options[:environment].each { |env, nodes_num|
       env_hash[env] = []
-
       nodes_num.times {
-        node_name = all_copy.delete_first(all_copy.first(:node)).properties[:name]
-        env_hash[env].push(node_name)
+        
+        all_check = $all.copy
+        # find the node where env should be deployed and delete it
+        $all.each { |node|
+          if node.corresponds({:site => @options[:site][i]})
+            $all.delete(node)
+            node.properties[:environment] = env
+            all_2.push(node)
+            env_hash[env].push(node.properties[:name])
+            break
+          end
+        }
+
+        if all_check == $all        #nothing was deleted from $all
+          # take the next site and find again
+          i += 1 
+          $all.each { |node|
+            if node.corresponds({:site => @options[:site][i]})
+              $all.delete(node)
+              node.properties[:environment] = env
+              all_2.push(node)
+              env_hash[env].push(node.properties[:name])
+              break
+            end
+          }
+        end
       }
     }
+    # each resource now has :environment property
+    $all = all_2
 
-    puts "---------------------BEFORE THE DEPLOYMENT---------------------"
-    puts "env_hash:"
-    pp env_hash
-    puts "options:"
-    pp @options
 
     # launch parallel deployments for each environment
     @options[:parallel_deploy] = parallel
@@ -144,9 +168,6 @@ def g5k_run
         @options[:nodes] = nodes.find_all { |node|
           node =~ /\S*.#{site}.\w*/
         }
-
-        puts "-----------nodes to deploy:"
-        pp @options[:nodes]
 
         if not @options[:nodes].empty?
           @options[:parallel_deploy].add(@options.merge(:site => site)) { |env|
@@ -227,15 +248,27 @@ def g5k_deploy(env)
 
   logger = @logger
 
+  env[:remaining_attempts] ||= env[:deployment_max_attempts]
   env[:nodes] = [env[:nodes]].flatten.sort
   logger.info "[#{env[:site]}] Launching deployment [no-deploy=#{env[:no_deploy].inspect}]..."
 
-  # environment deployment (using Restfully gem)
-  deployment = @connection.root.sites[env[:site].to_sym].deployments.submit({
-    :nodes => env[:nodes],
-    :environment => env[:environment],
-    :key => key_for_deployment(env)
-  }.merge(env.reject{ |k,v| !valid_deployment_key?(k) }))
+
+  if env[:remaining_attempts] > 0
+    if env[:remaining_attempts] < env[:deployment_max_attempts]
+      logger.info "Retrying deployment..."
+    end
+    env[:remaining_attempts] -= 1
+    # environment deployment (using Restfully gem)
+    deployment = @connection.root.sites[env[:site].to_sym].deployments.submit({
+      :nodes => env[:nodes],
+      :notifications => env[:notifications],
+      :environment => env[:environment],
+      :key => key_for_deployment(env)
+    }.merge(env.reject{ |k,v| !valid_deployment_key?(k) }))
+  else
+    logger.info "[#{env[:site]}] Hit the maximum number of retries. Halting."
+    deployment = nil
+  end
 
   if deployment.nil?
     logger.error "[#{env[:site]}] Cannot submit the deployment."
@@ -261,11 +294,10 @@ def g5k_deploy(env)
     else
       synchronize { @deployments.delete(deployment) }
       logger.error "[#{env[:site]}] Deployment failed: #{deployment.inspect}"
+      g5k_deploy(env)
     end
   end
 end
-
-
 
 #-------------------- Helper routines ----------------------------------
 #
@@ -524,6 +556,8 @@ def self.extract_resources_new(result)
               # here we must construct gateway's name in place
               gw = /\w*\.(\w+)\.\w*/.match(node) 
               gateway = "frontend."+gw[1]+".grid5000.fr"
+              resource.properties[:site] = gw[1]
+              resource_set.properties[:site] = gw[1]
               resource.properties[:gateway] = gateway
               resource_set.properties[:gateway] = gateway
               resource_set.push(resource)

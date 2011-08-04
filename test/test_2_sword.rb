@@ -1,9 +1,17 @@
-require 'expo_g5k'
+require 'g5k_api'
 
-oargridsub :res => "lille:rdef=\"/nodes=2\":prop=\"memnode=8192 and myri10g='YES'\",grenoble:rdef=\"/nodes=1\""
+# reserve 2 nodes from sagittaire cluster (Lyon) with 8192KB cpu cache and
+# one node from Grenoble
+g5k_init( 
+  :site => ["lyon", "grenoble"], 
+  :resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2", "nodes=1"] 
+)
+g5k_run
 
 check $all
 
+# copy a tarball from the frontend to the nodes and output the text
+# file from the tarball
 $all.uniq.each { |node| 
   copy "~/tars/simple.tar", node, :location => $all.gw, :path => "/home/oiegorov/hello/"
   task node, "tar xvf /home/oiegorov/hello/simple.tar -C /home/oiegorov/hello"

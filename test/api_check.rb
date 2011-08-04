@@ -6,10 +6,12 @@ g5k_init(
 #  :site => ["lille", "lyon"], 
 #  :resources => ["nodes=1", "nodes=1"], 
 #  :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 1},
-  :site => ["lille", "rennes"], 
-  :resources => ["nodes=1", "nodes=2"], 
+  :site => ["lyon", "rennes"], 
+#  :resources => ["cluster=\"capricorne\",nodes=1", "nodes=2"], 
+  :resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2", "nodes=1"], 
 #  :environment => {"lenny-x64-base" => 1},
-  :walltime => 690
+  :walltime => 1000,
+  :no_cleanup => true
 #  :deploy => true
 #  :types => ["deploy"]
 #  :no_cleanup => true
@@ -18,6 +20,7 @@ g5k_run
 
 check $all
 
+=begin
 $all.uniq.each { |node| 
   copy "~/tars/simple.tar", node, :location => $all.gw, :path => "/home/oiegorov/hello/"
   task node, "tar xvf /home/oiegorov/hello/simple.tar -C /home/oiegorov/hello"
@@ -25,6 +28,7 @@ $all.uniq.each { |node|
   task node, "rm /home/oiegorov/hello/*"
 }
 
+=end
 
 =begin
 $all.each { |node|
@@ -35,5 +39,3 @@ $all.each { |node|
 
 barrier
 =end
-
-cleanup

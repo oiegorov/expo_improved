@@ -200,7 +200,8 @@ class ResourceSet < Resource
                                 @resources.delete_at(i)
                                 res = resource
                         elsif @resources[i].kind_of?(ResourceSet) then
-                                if @resources[i].delete_all( resource ) then
+                                #if @resources[i].delete_all( resource ) then
+                                if @resources[i].delete( resource ) then
                                         res = resource
                                 end
                         end

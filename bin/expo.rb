@@ -9,7 +9,7 @@ require 'resourceset'
 require 'taskset'
 require 'thread'
 
-require 'g5k_api'
+require 'g5k_api' #for cleanup after the experiment is finished
 
 port = 15783
 
@@ -97,8 +97,8 @@ def check( nodes )
   tree = YAML::load( result["stdout"] )
 
   #----for debugging
-  puts "dates :"
-  puts result["stdout"];
+  #puts "dates :"
+  #puts result["stdout"];
   
   puts "Failing nodes :"
   tree["connectors"].each_value { |error|
@@ -277,5 +277,11 @@ end
 
 load($rest.last)
 
-cleanup
+puts "are we cleaning?"
+puts @options[:no_cleanup]
+if not @options[:no_cleanup]
+  # clean up reservations & deployments
+  cleanup
+end
+
 $client.close_experiment
