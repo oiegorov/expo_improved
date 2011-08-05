@@ -196,7 +196,9 @@ As you can see from these examples there is a direct correspondence in the order
 ## Appendix A. List of g5k_init parameters 
 
 * **:site => ["lille", "grenoble", ...]**          reserve on specific sites
+  
   **:site => "all"**                               reserve on all Grid5000 sites
+  
   **:site => "any"**                               reserve on a site with the max number of available nodes
 * **:resources => ["nodes=1", "nodes=5"]**         reserve one node on the first site from :site, 5 nodes on the second site
   **:resources => ["cluster=2/nodes=3"]**          reserve 3 nodes in 2 different clusters
