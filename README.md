@@ -103,7 +103,7 @@ We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
 
 As you can see, an experiment specification can be divided into two parts:
 
-1. Describe all your requirements (sites, nodes, environments, walltime, etc. -- for the full list see lib/g5k_api.rb) and run reservation (+ deployment if :types => ["deploy"] was specified)
+1. Describe all your requirements (sites, nodes, environments, walltime, etc. -- for the full list see Appendix below) and run reservation (+ deployment if :types => ["deploy"] was specified)
 
 2. Do whatever you want with reserved nodes (using $all variable to address nodes and Expo's DSL commands: task, atask, ptask, etc.)
 
@@ -130,4 +130,34 @@ As Expo uses OAR2 to reserve the nodes, most of the parameters you specify in g5
       task node, "rm /home/oiegorov/hello/*"
     }
 
-To check all possible resource requests using OAR2: [this link](http://oar.imag.fr/user-usecases/#index4h1)
+To check all possible resource requests using OAR2: [this link](http://oar.imag.fr/user-usecases/#index5h1)
+
+### Deployment
+
+All you have to do to deploy an environment(s) on the reserved nodes is
+* list the environments you want to deploy and on how many nodes you want them to be deployed
+* add :types => ["deploy"] as a parameter to g5k_init()
+
+Let's consider the following situation. You want to deploy "lenny-x64-base" environment on 1 node in Lyon and "squeeze-x64-base" on 1 node in Grenoble. After the deployment is finished, you don't want to close the experiment, but display all the nodes with deployed environment on them to be able to connect to them manually afterwards.
+
+    require 'g5k_api'                                                               
+
+    g5k_init( 
+      :site => ["lyon", "grenoble"], 
+      :resources => ["nodes=1", "nodes=1"], 
+      :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 1}, 
+      :walltime => 1800,
+      :types => ["deploy"]
+      :no_cleanup => true                       # don't delete the experiment after the test is finished
+    )
+    g5k_run
+
+    $all.each { |node|
+      puts "Node: #{node.properties[:name]}; environment: #{node.properties[:environment]}"
+    }
+
+
+### More specific deployment
+
+Consider now the following case. You want to deploy two environments: one is a server environment and another one is a client environment. The server one should be deployed on 1 node. The client one should be deployed on 10 nodes. All from the same cluster.
+After the deployment is finished you want to start a server application on the server node. After the server is waiting for requests, you want to start a client application on all the client nodes. 
