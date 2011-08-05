@@ -82,7 +82,7 @@ experiments.
 Let's consider several tests.
 
 We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
-"date" command on each node:
+"uname -a" command on each node:
 
     require 'g5k_api'
     g5k_init(                                                                   
@@ -90,9 +90,14 @@ We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
       :resources => ["nodes=2", "nodes=3"], 
       :walltime => 100 
     )
-    g5k_run                     #run the reservation     
-    check $all                  #check that all the nodes were properly reserved          
-    $all.each { |node|          #$all contains a set of reserved nodes
-      task node, "uname -a"     # execute on node command "uname -a" and wait till it finishes
+    g5k_run                     # run the reservation     
+    check $all                  # check that all the nodes were properly reserved          
+    $all.each { |node|          # $all contains a set of reserved nodes
+      task node, "uname -a"     # execute command "uname -a" on each and wait till it finishes
     }     
 
+As you can see, an experiment specification can be divided into two parts:
+
+1. Describe all your requirements (sites, nodes, environments, walltime, etc. -- for the full list see lib/g5k_api.rb) and run reservation (+ deployment if :types => ["deploy"] was specified)
+
+2. Do whatever you want with reserved nodes (using $all variable to address nodes and Expo's DSL commands: task, atask, ptask, etc.)
