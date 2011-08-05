@@ -81,7 +81,7 @@ experiments.
 
 Let's consider several tests.
 
-1. We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
+We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
 "date" command on each node:
 
     require 'g5k_api'
@@ -90,12 +90,13 @@ Let's consider several tests.
       :resources => ["nodes=2", "nodes=3"], 
       :walltime => 100 
     )
-    # run the reservation
+    #run the reservation
     g5k_run        
     #check that all the nodes were properly reserved
     check $all          
-    #  $all contains a set of reserved nodes
+    #$all contains a set of reserved nodes
     $all.each { |node|
       # execute on node command "uname -a" and wait till it finishes
       task node, "uname -a" 
     }     
+
