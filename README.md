@@ -14,6 +14,8 @@ of [Grid5000 API](https://api.grid5000.fr/) and such tools as [OAR](http://oar.i
 
 The new version of Expo uses the Restfully http://github.com/crohr/restfully ruby gem to reserve and deploy the nodes using the Grid5000 API
 
+    $ gem install restfully
+
 ## Installation
 
 You can work with Expo in two modes:
