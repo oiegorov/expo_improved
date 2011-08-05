@@ -168,30 +168,25 @@ Let's consider the following situation. You want to deploy "lenny-x64-base" envi
 Consider now the following case. You want to deploy two environments: one is a server environment and another one is a client environment. The server one should be deployed on 1 node. The client one should be deployed on 10 nodes. All from the same cluster.
 After the deployment is finished you want to start a server application on the server node. After the server is waiting for requests, you want to start a client application on all the client nodes. 
 
-    require 'g5k_api'                                                               
-    
+    require 'g5k_api'
+
     g5k_init( 
       :site => ["lille"], 
-      :resources => ["cluster=1/nodes=4"], 
-      :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 3}, 
+      :resources => ["cluster=1/nodes=10"], 
+      :environment => {"server_environment" => 1, "client_environment" => 3}, 
       :walltime => 1800,
       :types => ["deploy"]
-    )   
+    )
     g5k_run
 
-    $all.each { |node|
-      location = "root@#{node.properties[:name]}"
-      if node.properties[:environment] == "lenny-x64-base"
-        task location, "date"
-      end
+    server = $all.select_resource(:environment => "lenny-x64-base")          #select a server node                
+    atask "root@#{server.name}", "./run_server"                              #run a server 
+
+    clients = $all.select(:node, :environment => "squeeze-x64-base")         #select all client nodes
+    clients.each { |client|
+      atask "root@#{client.name}", "./run_client"                            #run a client 
     }
 
-    $all.each { |node|
-      location = "root@#{node.properties[:name]}"
-      if node.properties[:environment] == "squeeze-x64-base"
-      atask location, "uname"
-  end 
-}
-barrier
+    barrier                                  # wait till all tasks are finished
 
 As you can see there is a direct correspondence in the order of sites, the number of nodes to reserve on each site, and the number of the nodes where the environment will be deployed.
