@@ -86,7 +86,7 @@ And start the experiment on your local machine:
 Expo uses Domain Specific Language (DSL) based on Ruby language to describe the
 experiments.
 
-Let's consider several tests.
+Let's consider several examples.
 
 ### The simplest test
 
@@ -110,13 +110,13 @@ We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
 
 As you can see, an experiment specification can be divided into two parts:
 
-1. Describe all your requirements (sites, nodes, environments, walltime, etc. -- for the full list see Appendix below) and run reservation (+ deployment if :types => ["deploy"] was specified)
+I. Describe all your requirements (sites, nodes, environments, walltime, etc. -- for the full list see Appendix below) and run reservation (+ deployment if :types => ["deploy"] was specified)
 
-2. Do whatever you want with reserved nodes (using $all variable to address nodes and Expo's DSL commands: task, atask, ptask, etc.)
+II. Do whatever you want with reserved nodes (using $all variable to address nodes and Expo's DSL commands: task, atask, ptask, etc.)
 
 ### More specific reservation
 
-As Expo uses OAR2 to reserve the nodes, most of the parameters you specify in g5k_init have the same semantics as in OAR. Thus, if we want to reserve 2 nodes in Lyon, on Sagittaire cluster with 8192KB of CPU cache we will have the following test file:
+As Expo uses OAR2 to reserve the nodes, most of the parameters you specify in *g5k_init()* have the same semantics as in OAR. Thus, if we want to reserve 2 nodes in Lyon, on Sagittaire cluster with 8192KB of CPU cache we will have the following test file:
 
     require 'g5k_api'                                                               
 
@@ -131,7 +131,7 @@ As Expo uses OAR2 to reserve the nodes, most of the parameters you specify in g5
     #copy a tarball from the frontend to the nodes and output the text
     #file from the tarball
     $all.uniq.each { |node| 
-      copy "~/tars/simple.tar", node, :location => $all.gw, :path => "/home/oiegorov/hello/"
+      copy "~/tars/simple.tar", node, :path => "/home/oiegorov/hello/"
       task node, "tar xvf /home/oiegorov/hello/simple.tar -C /home/oiegorov/hello"
       task node, "cat /home/oiegorov/hello/readmeplz"
       task node, "rm /home/oiegorov/hello/*"
@@ -143,17 +143,17 @@ To check all possible resource requests using OAR2: [this link](http://oar.imag.
 
 All you have to do to deploy an environment(s) on the reserved nodes is
 
-* list the environments you want to deploy and on how many nodes you want them to be deployed
+* list the environments and the number of nodes to deploy
 * add :types => ["deploy"] as a parameter to g5k_init()
 
-Let's consider the following situation. You want to deploy "lenny-x64-base" environment on 1 node in Lyon and "squeeze-x64-base" on 2 nodes in Grenoble. After the deployment is finished, you don't want to close the experiment, but display all the nodes with deployed environment on them to be able to connect to them manually afterwards.
+Let's consider the following situation. You want to deploy "lenny-x64-base" environment on 1 node in Lyon and "squeeze-x64-base" on 1 node in Lyon and on 2 nodes in Grenoble. After the deployment is finished, you don't want to close the experiment, but display all the nodes with deployed environment on them to be able to connect to them manually afterwards.
 
     require 'g5k_api'                                                               
 
     g5k_init( 
       :site => ["lyon", "grenoble"], 
-      :resources => ["nodes=1", "nodes=2"], 
-      :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 2}, 
+      :resources => ["nodes=2", "nodes=2"], 
+      :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 3}, 
       :walltime => 1800,
       :types => ["deploy"]
       :no_cleanup => true                       # don't delete the experiment after the test is finished
@@ -191,4 +191,24 @@ After the deployment is finished you want to start a server application on the s
 
     barrier                                  # wait till all tasks are finished
 
-As you can see there is a direct correspondence in the order of sites, the number of nodes to reserve on each site, and the number of the nodes where the environment will be deployed.
+As you can see from these examples there is a direct correspondence in the order of sites, the number of nodes to reserve on each site, and the number of the nodes where the environment will be deployed.
+
+## Appendix A. List of g5k_init parameters 
+
+* :site => ["lille", "grenoble", ...]          # reserve on specific sites
+  :site => "all"                               # reserve on all Grid5000 sites
+  :site => "any"                               # reserve on a site with the max number of available nodes
+* :resources => ["nodes=1", "nodes=5"]         # reserve one node on the first site from :site, 5 nodes on the second site
+  :resources => ["cluster=2/nodes=3"]          # reserve 3 nodes in 2 different clusters
+  :resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2"]   # reserve 2 nodes with properties
+* :environment => {"env1" => 2}                # deploy env1 environment on the first 2 nodes from resources array
+  :environment => {"env1" => 1, "env2" => 2}   # deploy env1 on the first node and env2 on the second and third nodes
+* :walltime => 1800                            # set the experiment duration to 1800 seconds
+* :types => ["deploy"]                         # specify reservation type to "deploy". The default one is "allow_classic_ssh". Can be also "besteffort"
+* :name => "experiment_name"                   # the name of your experiment
+* :no_cleanup => false                         # if false (default) - the experiment will be deleted after the Expo returns
+* :deployment_max_attempts => 1                # how many times we want to redeploy a node if the deployment fails
+* :submission_timeout => 5*60                  # for how long we wait the reservation to be finished
+* :deployment_timeout => 15*60                  # for how long we wait the deployment to be finished
+
+The default values are:
