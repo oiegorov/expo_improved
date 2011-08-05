@@ -208,10 +208,10 @@ As you can see from these examples there is a direct correspondence in the order
 * **:name => "experiment_name"**                    the name of your experiment
 * **:no_cleanup => false**                          if false (default) - the experiment will be deleted after the Expo returns
 * **:deployment_max_attempts => 1**                 how many times we want to redeploy a node if the deployment fails
-* **:submission_timeout => 5*60**                   for how long we wait the reservation to be finished
-* **:deployment_timeout => 15*60**                  for how long we wait the deployment to be finished
+* **:submission_timeout => 5*60**                   for how long we wait for the reservation to be finished
+* **:deployment_timeout => 15*60**                  for how long we wait for the deployment to be finished
 
-The default values are:
+The default values are: <br>
 :site => ["lille"] <br>
 :resources => ["nodes=1"] <br>
 :environment => "lenny-x64-base" <br>
@@ -221,3 +221,16 @@ The default values are:
 :deployment_max_attempts => 1 <br>
 :submission_timeout => 5*60 <br>
 :deployment_timeout => 15*60 <br>
+
+## Appendix B. Expo commands and global variables
+
+* **$all** is a ResourceSet where each reserved node is a Resource. <br>
+available methods of the ResourceSet and Resource classes can be checked in lib/resourceset.rb
+* **task**
+* **atask**
+* **barrier**
+* **ptask**
+* **patask**
+* copy
+* parallel_section ??
+* check
