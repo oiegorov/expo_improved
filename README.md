@@ -90,13 +90,9 @@ We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
       :resources => ["nodes=2", "nodes=3"], 
       :walltime => 100 
     )
-    #run the reservation
-    g5k_run        
-    #check that all the nodes were properly reserved
-    check $all          
-    #$all contains a set of reserved nodes
-    $all.each { |node|
-      # execute on node command "uname -a" and wait till it finishes
-      task node, "uname -a" 
+    g5k_run                     #run the reservation     
+    check $all                  #check that all the nodes were properly reserved          
+    $all.each { |node|          #$all contains a set of reserved nodes
+      task node, "uname -a"     # execute on node command "uname -a" and wait till it finishes
     }     
 
