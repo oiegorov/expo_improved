@@ -28,48 +28,48 @@ Then
 
     $ export RUBYLIB=your_path/expo_improved/lib
 
-1. In case you work exclusively on the frontend
+* In case you work **exclusively on the frontend**
 
-  $ echo "base_uri: https://api.grid5000.fr/2.0/grid5000" > ~/.restfully/api.grid5000.fr.yml
+    $ echo "base_uri: https://api.grid5000.fr/2.0/grid5000" > ~/.restfully/api.grid5000.fr.yml
 
 And you are ready to go:
 
-  $ your_path/expo_improved/bin/expo.rb path_to_your_test_file
+    $ your_path/expo_improved/bin/expo.rb path_to_your_test_file
 
-2. In case you want to run expo from your local machine you have to
+* In case you want **to run expo from your local machine** you have to
 configure both your machine (for expo client) and the frontend (for expo
 server).
 
 The following command should be executed on your machine as well as on the
 frontend:
 
-  $ echo "---
-  rmi_protocol: soap
-  port: 15789" > ~/.expctrl_server
+    $ echo "---
+    rmi_protocol: soap
+    port: 15789" > ~/.expctrl_server
 
 Now execute on your local machine (specifying your Grid5000 login and
 password):
 
-  $ mkdir ~/.restfully
-  $ echo "
-  username: USER_NAME
-  password: GRID5000PASSWORD
-  base_uri: https://api.grid5000.fr/2.0/grid5000
-  " > ~/.restfully/api.grid5000.fr.yml
-  $ chmod 0600 ~/.restfully/api.grid5000.fr.yml
+    $ mkdir ~/.restfully
+    $ echo "
+    username: USER_NAME
+    password: GRID5000PASSWORD
+    base_uri: https://api.grid5000.fr/2.0/grid5000
+    " > ~/.restfully/api.grid5000.fr.yml
+    $ chmod 0600 ~/.restfully/api.grid5000.fr.yml
 
 And the last thing is to establish an SSH tunnel from your local machine:
 
-  $ ssh -f USER_NAME@access.YOUR_FRONTEND.grid5000.fr -L 15789:frontend:15789 -N
+    $ ssh -f USER_NAME@access.YOUR_FRONTEND.grid5000.fr -L 15789:frontend:15789 -N
 
 specifying your USER_NAME and YOUR_FRONTEND where you will launch expo
 server.
 
 Now you run expo server on the frontend
   
-  $ your_path/expo_improved/bin/expctrl_server.rb
+    $ your_path/expo_improved/bin/expctrl_server.rb
 
 And start the experiment on your local machine:
 
-  $ your_path/expo_improved/bin/expo.rb path_to_your_test_file
+    $ your_path/expo_improved/bin/expo.rb path_to_your_test_file
 
