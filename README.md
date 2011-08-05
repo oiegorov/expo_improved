@@ -135,17 +135,18 @@ To check all possible resource requests using OAR2: [this link](http://oar.imag.
 ### Deployment
 
 All you have to do to deploy an environment(s) on the reserved nodes is
+
 * list the environments you want to deploy and on how many nodes you want them to be deployed
 * add :types => ["deploy"] as a parameter to g5k_init()
 
-Let's consider the following situation. You want to deploy "lenny-x64-base" environment on 1 node in Lyon and "squeeze-x64-base" on 1 node in Grenoble. After the deployment is finished, you don't want to close the experiment, but display all the nodes with deployed environment on them to be able to connect to them manually afterwards.
+Let's consider the following situation. You want to deploy "lenny-x64-base" environment on 1 node in Lyon and "squeeze-x64-base" on 2 nodes in Grenoble. After the deployment is finished, you don't want to close the experiment, but display all the nodes with deployed environment on them to be able to connect to them manually afterwards.
 
     require 'g5k_api'                                                               
 
     g5k_init( 
       :site => ["lyon", "grenoble"], 
-      :resources => ["nodes=1", "nodes=1"], 
-      :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 1}, 
+      :resources => ["nodes=1", "nodes=2"], 
+      :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 2}, 
       :walltime => 1800,
       :types => ["deploy"]
       :no_cleanup => true                       # don't delete the experiment after the test is finished
@@ -161,3 +162,29 @@ Let's consider the following situation. You want to deploy "lenny-x64-base" envi
 
 Consider now the following case. You want to deploy two environments: one is a server environment and another one is a client environment. The server one should be deployed on 1 node. The client one should be deployed on 10 nodes. All from the same cluster.
 After the deployment is finished you want to start a server application on the server node. After the server is waiting for requests, you want to start a client application on all the client nodes. 
+
+    require 'g5k_api'                                                               
+    
+    g5k_init( 
+      :site => ["lille"], 
+      :resources => ["cluster=1/nodes=4"], 
+      :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 3}, 
+      :walltime => 1800,
+      :types => ["deploy"]
+    )   
+    g5k_run
+
+    $all.each { |node|
+      location = "root@#{node.properties[:name]}"
+      if node.properties[:environment] == "lenny-x64-base"
+        task location, "date"
+      end
+    }
+
+    $all.each { |node|
+  location = "root@#{node.properties[:name]}"
+  if node.properties[:environment] == "squeeze-x64-base"
+    atask location, "uname"
+  end 
+}
+barrier
