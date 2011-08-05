@@ -195,8 +195,7 @@ As you can see from these examples there is a direct correspondence in the order
 
 ## Appendix A. List of g5k_init parameters 
 
-* **:site => ["lille", "grenoble", ...]**          reserve on specific sites
-  
+* **:site => ["lille", "grenoble", ...]**          reserve on specific sites <br>
   **:site => "all"**                               reserve on all Grid5000 sites
   
   **:site => "any"**                               reserve on a site with the max number of available nodes
