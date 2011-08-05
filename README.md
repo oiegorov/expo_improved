@@ -196,12 +196,11 @@ As you can see from these examples there is a direct correspondence in the order
 ## Appendix A. List of g5k_init parameters 
 
 * **:site => ["lille", "grenoble", ...]**          reserve on specific sites <br>
-  **:site => "all"**                               reserve on all Grid5000 sites
-  
+  **:site => "all"**                               reserve on all Grid5000 sites <br>
   **:site => "any"**                               reserve on a site with the max number of available nodes
-* **:resources => ["nodes=1", "nodes=5"]**         reserve one node on the first site from :site, 5 nodes on the second site
-  **:resources => ["cluster=2/nodes=3"]**          reserve 3 nodes in 2 different clusters
-  **:resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2"]**   reserve 2 nodes with properties
+* **:resources => ["nodes=1", "nodes=5"]**         reserve one node on the first site from :site, 5 nodes on the second site<br>
+  **:resources => ["cluster=2/nodes=3"]**          reserve 3 nodes in 2 different clusters <br>
+  **:resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2"]**   reserve 2 nodes with properties <br>
 * **:environment => {"env1" => 2}**                 deploy env1 environment on the first 2 nodes from resources array
   **:environment => {"env1" => 1, "env2" => 2}**    deploy env1 on the first node and env2 on the second and third nodes
 * **:walltime => 1800**                             set the experiment duration to 1800 seconds
