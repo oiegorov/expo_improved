@@ -85,7 +85,6 @@ Let's consider several tests.
 "date" command on each node:
 
     require 'g5k_api'
-        
     g5k_init(                                                                   
       :site => ["lille", "grenoble"], 
       :resources => ["nodes=2", "nodes=3"], 
@@ -93,10 +92,8 @@ Let's consider several tests.
     )
     # run the reservation
     g5k_run        
-
     #check that all the nodes were properly reserved
     check $all          
-
     #  $all contains a set of reserved nodes
     $all.each { |node|
       # execute on node command "uname -a" and wait till it finishes
