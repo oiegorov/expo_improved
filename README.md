@@ -195,20 +195,20 @@ As you can see from these examples there is a direct correspondence in the order
 
 ## Appendix A. List of g5k_init parameters 
 
-* :site => ["lille", "grenoble", ...]          # reserve on specific sites
-  :site => "all"                               # reserve on all Grid5000 sites
-  :site => "any"                               # reserve on a site with the max number of available nodes
-* :resources => ["nodes=1", "nodes=5"]         # reserve one node on the first site from :site, 5 nodes on the second site
-  :resources => ["cluster=2/nodes=3"]          # reserve 3 nodes in 2 different clusters
-  :resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2"]   # reserve 2 nodes with properties
-* :environment => {"env1" => 2}                # deploy env1 environment on the first 2 nodes from resources array
-  :environment => {"env1" => 1, "env2" => 2}   # deploy env1 on the first node and env2 on the second and third nodes
-* :walltime => 1800                            # set the experiment duration to 1800 seconds
-* :types => ["deploy"]                         # specify reservation type to "deploy". The default one is "allow_classic_ssh". Can be also "besteffort"
-* :name => "experiment_name"                   # the name of your experiment
-* :no_cleanup => false                         # if false (default) - the experiment will be deleted after the Expo returns
-* :deployment_max_attempts => 1                # how many times we want to redeploy a node if the deployment fails
-* :submission_timeout => 5*60                  # for how long we wait the reservation to be finished
-* :deployment_timeout => 15*60                  # for how long we wait the deployment to be finished
+* **:site => ["lille", "grenoble", ...]**          reserve on specific sites
+  **:site => "all"**                               reserve on all Grid5000 sites
+  **:site => "any"**                               reserve on a site with the max number of available nodes
+* **:resources => ["nodes=1", "nodes=5"]**         reserve one node on the first site from :site, 5 nodes on the second site
+  **:resources => ["cluster=2/nodes=3"]**          reserve 3 nodes in 2 different clusters
+  **:resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2"]**   reserve 2 nodes with properties
+* **:environment => {"env1" => 2}**                 deploy env1 environment on the first 2 nodes from resources array
+  **:environment => {"env1" => 1, "env2" => 2}**    deploy env1 on the first node and env2 on the second and third nodes
+* **:walltime => 1800**                             set the experiment duration to 1800 seconds
+* **:types => ["deploy"]**                          specify reservation type to "deploy". The default one is "allow_classic_ssh". Can be also "besteffort"
+* **:name => "experiment_name"**                    the name of your experiment
+* **:no_cleanup => false**                          if false (default) - the experiment will be deleted after the Expo returns
+* **:deployment_max_attempts => 1**                 how many times we want to redeploy a node if the deployment fails
+* **:submission_timeout => 5*60**                   for how long we wait the reservation to be finished
+* **:deployment_timeout => 15*60**                  for how long we wait the deployment to be finished
 
 The default values are:
