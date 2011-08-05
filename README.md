@@ -200,9 +200,9 @@ As you can see from these examples there is a direct correspondence in the order
   **:site => "any"**                               reserve on a site with the max number of available nodes
 * **:resources => ["nodes=1", "nodes=5"]**         reserve one node on the first site from :site, 5 nodes on the second site<br>
   **:resources => ["cluster=2/nodes=3"]**          reserve 3 nodes in 2 different clusters <br>
-  **:resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2"]**   reserve 2 nodes with properties <br>
-* **:environment => {"env1" => 2}**                 deploy env1 environment on the first 2 nodes from resources array
-  **:environment => {"env1" => 1, "env2" => 2}**    deploy env1 on the first node and env2 on the second and third nodes
+  **:resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2"]**   reserve 2 nodes with properties 
+* **:environment => {"env1" => 2}**                 deploy env1 environment on the first 2 nodes from resources array <br>
+  **:environment => {"env1" => 1, "env2" => 2}**    deploy env1 on the first node and env2 on the second and third nodes 
 * **:walltime => 1800**                             set the experiment duration to 1800 seconds
 * **:types => ["deploy"]**                          specify reservation type to "deploy". The default one is "allow_classic_ssh". Can be also "besteffort"
 * **:name => "experiment_name"**                    the name of your experiment
@@ -212,3 +212,12 @@ As you can see from these examples there is a direct correspondence in the order
 * **:deployment_timeout => 15*60**                  for how long we wait the deployment to be finished
 
 The default values are:
+:site => ["lille"] <br>
+:resources => ["nodes=1"] <br>
+:environment => "lenny-x64-base" <br>
+:walltime => 3600 <br>
+:types => ["allow_classic_ssh"] <br>
+:no_cleanup => false <br>
+:deployment_max_attempts => 1 <br>
+:submission_timeout => 5*60 <br>
+:deployment_timeout => 15*60 <br>
