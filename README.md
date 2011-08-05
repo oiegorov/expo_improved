@@ -10,7 +10,9 @@ With Expo you can easily:
 To run the simplest experiments it will be sufficient just to understand
 the examples presented below. However, in order to happily use all the
 Expo functionality you are recommended to have at least basic knowledge
-of Grid5000 API and such tools as OAR, Kadeploy and Taktuk. 
+of [Grid5000 API](https://api.grid5000.fr/) and such tools as [OAR](http://oar.imag.fr/), [Kadeploy](http://www.grid5000.fr/mediawiki/index.php/Kadeploy-v3) and [Taktuk](http://taktuk.gforge.inria.fr/).
+
+The new version of Expo uses the Restfully http://github.com/crohr/restfully ruby gem to reserve and deploy the nodes using the Grid5000 API
 
 ## Installation
 
@@ -182,9 +184,11 @@ After the deployment is finished you want to start a server application on the s
     }
 
     $all.each { |node|
-  location = "root@#{node.properties[:name]}"
-  if node.properties[:environment] == "squeeze-x64-base"
-    atask location, "uname"
+      location = "root@#{node.properties[:name]}"
+      if node.properties[:environment] == "squeeze-x64-base"
+      atask location, "uname"
   end 
 }
 barrier
+
+As you can see there is a direct correspondence in the order of sites, the number of nodes to reserve on each site, and the number of the nodes where the environment will be deployed.
