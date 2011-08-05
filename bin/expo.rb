@@ -277,8 +277,6 @@ end
 
 load($rest.last)
 
-puts "are we cleaning?"
-puts @options[:no_cleanup]
 if not @options[:no_cleanup]
   # clean up reservations & deployments
   cleanup

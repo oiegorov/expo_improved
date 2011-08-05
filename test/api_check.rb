@@ -1,5 +1,4 @@
 require 'g5k_api'
-#require 'expo_g5k'
 require 'pp'
 
 g5k_init( 
@@ -10,8 +9,7 @@ g5k_init(
 #  :resources => ["cluster=\"capricorne\",nodes=1", "nodes=2"], 
   :resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2", "nodes=1"], 
 #  :environment => {"lenny-x64-base" => 1},
-  :walltime => 1000,
-  :no_cleanup => true
+  :walltime => 1000
 #  :deploy => true
 #  :types => ["deploy"]
 #  :no_cleanup => true
@@ -20,7 +18,6 @@ g5k_run
 
 check $all
 
-=begin
 $all.uniq.each { |node| 
   copy "~/tars/simple.tar", node, :location => $all.gw, :path => "/home/oiegorov/hello/"
   task node, "tar xvf /home/oiegorov/hello/simple.tar -C /home/oiegorov/hello"
@@ -28,7 +25,6 @@ $all.uniq.each { |node|
   task node, "rm /home/oiegorov/hello/*"
 }
 
-=end
 
 =begin
 $all.each { |node|
