@@ -28,7 +28,7 @@ Then
 
     $ export RUBYLIB=your_path/expo_improved/lib
 
-### Run Expo exclusively on the frontend
+### (Case 1) Run Expo exclusively on the frontend
 
     $ echo "base_uri: https://api.grid5000.fr/2.0/grid5000" > ~/.restfully/api.grid5000.fr.yml
 
@@ -36,7 +36,7 @@ And you are ready to go:
 
     $ your_path/expo_improved/bin/expo.rb path_to_your_test_file
 
-### Run Expo from your local machine 
+### (Case 2) Run Expo from your local machine 
 
 You have to configure both your machine (for expo client) and the frontend (for expo
 server).
