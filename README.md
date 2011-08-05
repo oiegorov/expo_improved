@@ -34,7 +34,8 @@ Then
 
 ### (Case 1) Run Expo exclusively on the frontend
 
-    $ echo "base_uri: https://api.grid5000.fr/2.0/grid5000" > ~/.restfully/api.grid5000.fr.yml
+   $ mkdir ~/.restfully 
+   $ echo "base_uri: https://api.grid5000.fr/2.0/grid5000" > ~/.restfully/api.grid5000.fr.yml
 
 And you are ready to go:
 
