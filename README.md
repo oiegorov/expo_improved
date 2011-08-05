@@ -76,10 +76,12 @@ And start the experiment on your local machine:
 
 ## Usage
 
-Expo uses Domain Specific Language (DSL) based on Ruby to describe the
+Expo uses Domain Specific Language (DSL) based on Ruby language to describe the
 experiments.
 
 Let's consider several tests.
+
+### The simplest test
 
 We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
 "uname -a" command on each node:
@@ -101,3 +103,27 @@ As you can see, an experiment specification can be divided into two parts:
 1. Describe all your requirements (sites, nodes, environments, walltime, etc. -- for the full list see lib/g5k_api.rb) and run reservation (+ deployment if :types => ["deploy"] was specified)
 
 2. Do whatever you want with reserved nodes (using $all variable to address nodes and Expo's DSL commands: task, atask, ptask, etc.)
+
+### More specific reservation
+
+As Expo uses OAR2 to reserve the nodes, most of the parameters you specify in g5k_init have the same semantics as in OAR. Thus, if we want to reserve 2 nodes in Lyon, on Sagittaire cluster with 8192KB of CPU cache we will have the following test file:
+
+    require 'g5k_api'                                                               
+
+    g5k_init( 
+      :site => ["lyon", "grenoble"], 
+      :resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2", "nodes=1"] 
+    )
+    g5k_run
+
+    check $all
+
+    #copy a tarball from the frontend to the nodes and output the text
+    #file from the tarball
+    $all.uniq.each { |node| 
+      copy "~/tars/simple.tar", node, :location => $all.gw, :path => "/home/oiegorov/hello/"
+      task node, "tar xvf /home/oiegorov/hello/simple.tar -C /home/oiegorov/hello"
+      task node, "cat /home/oiegorov/hello/readmeplz"
+      task node, "rm /home/oiegorov/hello/*"
+    }
+
