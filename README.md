@@ -2,9 +2,10 @@
 Expo helps you to run the experiments on Grid5000.
 
 With Expo you can easily:
-* reserve nodes
-* deploy environments
-* do whatever you want with the reserved nodes
+
+* reserve nodes;
+* deploy environments;
+* do whatever you want with the reserved nodes;
 
 To run the simplest experiments it will be sufficient just to understand
 the examples presented below. However, in order to happily use all the
@@ -14,17 +15,18 @@ of Grid5000 API and such tools as OAR, Kadeploy and Taktuk.
 ## Installation
 
 You can work with Expo in two modes:
-1. On the frontend
+
+1. On the frontend.
 2. On your local machine. However, the Expo server should be started on
-the frontend and SSH tunnel should be established (explained below)
+the frontend and SSH tunnel should be established (explained below).
 
 In both cases the first thing to do:
 
-  git clone git://github.com/oiegorov/expo_improved.git
+    $ git clone git://github.com/oiegorov/expo_improved.git
 
 Then
 
-  $ export RUBYLIB=your_path/expo_improved/lib
+    $ export RUBYLIB=your_path/expo_improved/lib
 
 1. In case you work exclusively on the frontend
 
