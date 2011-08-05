@@ -87,13 +87,16 @@ We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
 "uname -a" command on each node:
 
     require 'g5k_api'
+    
     g5k_init(                                                                   
       :site => ["lille", "grenoble"], 
       :resources => ["nodes=2", "nodes=3"], 
       :walltime => 100 
     )
     g5k_run                     # run the reservation     
+    
     check $all                  # check that all the nodes were properly reserved          
+    
     $all.each { |node|          # $all contains a set of reserved nodes
       task node, "uname -a"     # execute command "uname -a" on each and wait till it finishes
     }     
@@ -127,3 +130,4 @@ As Expo uses OAR2 to reserve the nodes, most of the parameters you specify in g5
       task node, "rm /home/oiegorov/hello/*"
     }
 
+To check all possible resource requests using OAR2: [this link](http://oar.imag.fr/user-usecases/#index4h1)
