@@ -146,7 +146,7 @@ All you have to do to deploy an environment(s) on the reserved nodes is
 * list the environments and the number of nodes to deploy
 * add :types => ["deploy"] as a parameter to g5k_init()
 
-Let's consider the following situation. You want to deploy "lenny-x64-base" environment on 1 node in Lyon and "squeeze-x64-base" on 1 node in Lyon and on 2 nodes in Grenoble. After the deployment is finished, you don't want to close the experiment, but display all the nodes with deployed environment on them to be able to connect to them manually afterwards.
+Let's consider the following situation. You want to deploy "lenny-x64-base" environment on 1 node in Lyon and "squeeze-x64-base" on 1 node in Lyon as well as on 2 nodes in Grenoble. After the deployment is finished, you don't want to close the experiment, but display all the nodes with deployed environment on them to be able to connect to them manually afterwards.
 
     require 'g5k_api'                                                               
 
@@ -182,7 +182,7 @@ After the deployment is finished you want to start a server application on the s
     g5k_run
 
     server = $all.select_resource(:environment => "lenny-x64-base")          #select a server node                
-    atask "root@#{server.name}", "./run_server"                              #run a server 
+    task "root@#{server.name}", "./run_server"                              #run a server 
 
     clients = $all.select(:node, :environment => "squeeze-x64-base")         #select all client nodes
     clients.each { |client|
