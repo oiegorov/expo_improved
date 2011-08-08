@@ -1,5 +1,5 @@
 # Expo
-Expo helps you to run the experiments on Grid5000.
+Expo helps you to run experiments on Grid5000.
 
 With Expo you can easily:
 
@@ -206,7 +206,7 @@ As you can see from these examples there is a direct correspondence in the order
 * **:walltime => 1800**                             set the experiment duration to 1800 seconds
 * **:types => ["deploy"]**                          specify reservation type to "deploy". The default one is "allow_classic_ssh". Can be also "besteffort"
 * **:name => "experiment_name"**                    the name of your experiment
-* **:no_cleanup => false**                          if false (default) - the experiment will be deleted after the Expo returns
+* **:no_cleanup => false**                          specifies if the experiment will be deleted after the Expo returns
 * **:deployment_max_attempts => 1**                 how many times we want to redeploy a node if the deployment fails
 * **:submission_timeout => 5*60**                   for how long we wait for the reservation to be finished
 * **:deployment_timeout => 15*60**                  for how long we wait for the deployment to be finished
@@ -224,13 +224,13 @@ The default values are: <br>
 
 ## Appendix B. Expo commands and global variables
 
-* **$all** is a ResourceSet where each reserved node is a Resource. <br>
-available methods of the ResourceSet and Resource classes can be checked in lib/resourceset.rb
-* **task**
-* **atask**
-* **barrier**
-* **ptask**
-* **patask**
-* copy
-* parallel_section ??
-* check
+* **$all** represents the general set of all reserved nodes. <br>
+It is an object of ResourceSet class which contains the references to all reserved nodes represented by Resource objects. To check all the methods of ResourceSet and Resource classes see **lib/resourceset.rb**
+* **task (node, command)** - execute **command** on **node** and wait till the command finishes its execution
+* **atask (node, command)** - asyncronous task. Execute **command** on **node** and do not wait till the command finishes its execution
+* **barrier** - wait for all asynchronous tasks to finish
+* **ptask (location, targets, command)** - parallel task. Run **command** from **location** on all the **targets** in parallel, and wait till the command finishes.
+* **patask (location, targets, command)** - asynchronous parallel task.
+* **copy (file, node, path={})** - copy **file** to **node** to the specified **path**. If path is not specified - copy to the default folder.
+* **parallel_section( &block )** - executes sequential sections which are called in the **block** in parallel. <br>
+* **sequential_section( &block )** -- should be called from parallel_section; code from the block is executed sequentially.
