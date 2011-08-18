@@ -102,9 +102,7 @@ We want to reserve 2 nodes in Lille, 3 nodes in Grenoble and execute
     )
     g5k_run                     # run the reservation     
     
-    check $all                  # check that all the nodes were properly reserved          
-    
-    $all.each { |node|          # $all contains a set of reserved nodes
+    all.each { |node|          # $all contains a set of reserved nodes
       task node, "uname -a"     # execute command "uname -a" on each and wait till it finishes
     }     
 
@@ -125,8 +123,6 @@ As Expo uses OAR2 to reserve the nodes, most of the parameters you specify in *g
       :resources => ["{cluster='sagittaire' and memcpu=8192}/nodes=2", "nodes=1"] 
     )
     g5k_run
-
-    check $all
 
     #copy a tarball from the frontend to the nodes and output the text
     #file from the tarball
