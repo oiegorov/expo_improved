@@ -151,7 +151,6 @@ Let's consider the following situation. You want to deploy "lenny-x64-base" envi
       :resources => ["nodes=2", "nodes=2"], 
       :environment => {"lenny-x64-base" => 1, "squeeze-x64-base" => 3}, 
       :walltime => 1800,
-      :types => ["deploy"]
       :no_cleanup => true                       # don't delete the experiment after the test is finished
     )
     g5k_run
@@ -172,8 +171,7 @@ After the deployment is finished you want to start a server application on the s
       :site => ["lille"], 
       :resources => ["cluster=1/nodes=10"], 
       :environment => {"server_environment" => 1, "client_environment" => 3}, 
-      :walltime => 1800,
-      :types => ["deploy"]
+      :walltime => 1800
     )
     g5k_run
 
@@ -200,7 +198,7 @@ As you can see from these examples there is a direct correspondence in the order
 * **:environment => {"env1" => 2}**                 deploy env1 environment on the first 2 nodes from resources array <br>
   **:environment => {"env1" => 1, "env2" => 2}**    deploy env1 on the first node and env2 on the second and third nodes 
 * **:walltime => 1800**                             set the experiment duration to 1800 seconds
-* **:types => ["deploy"]**                          specify reservation type to "deploy". The default one is "allow_classic_ssh". Can be also "besteffort"
+* **:types => ["besteffort"]**                      specify reservation type to "besteffort".
 * **:name => "experiment_name"**                    the name of your experiment
 * **:no_cleanup => false**                          specifies if the experiment will be deleted after the Expo returns
 * **:deployment_max_attempts => 1**                 how many times we want to redeploy a node if the deployment fails
