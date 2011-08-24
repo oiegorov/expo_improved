@@ -3,7 +3,8 @@ require 'g5k_api'
 # reserve 2 nodes from Lille and 3 nodes from Grenoble
 g5k_init( 
   :site => ["lille", "grenoble"], 
-  :resources => ["nodes=2", "nodes=3"] 
+  :resources => ["nodes=2", "nodes=3"], 
+  :walltime => 100
 )
 g5k_run
 

@@ -72,9 +72,10 @@ at_exit {
   barrier
 }
 
-#Check all nodes (what is default test ?)
-#check $all
+# !! we don't need check anymore. Reservation is checked automatically
+# in g5k_run
 
+=begin
 def check( nodes )
   n = nodes.flatten(:node).uniq
   puts "testing : " + n.inspect
@@ -111,6 +112,7 @@ def check( nodes )
   puts
   return nil
 end
+=end
 
 #Copy data from home directory to tmp on $all gateway (here gdx gw)
 #task $all.gw, "scp ~/data  #{$all.first}:/tmp/"

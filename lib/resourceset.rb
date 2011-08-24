@@ -138,6 +138,16 @@ class ResourceSet < Resource
             return nil
         end
 
+        def select_resource( props )
+          @resources.each { |resource|
+            if resource.corresponds( props ) then
+              return resource
+            end 
+          }   
+        end 
+
+
+
         def select( type=nil, props=nil , &block)
                 set = ResourceSet::new
                 if not block then

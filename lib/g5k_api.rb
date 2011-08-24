@@ -18,7 +18,7 @@ require 'thread'
   :logger => Logger.new(STDERR),
   :site => "lille",
   :resources => "nodes=1",
-  :environment => "lenny-x64-base",
+  #:environment => {"lenny-x64-base" => 1},
   :types => ["allow_classic_ssh"], #should be overwritten by "deploy" in case of deployment
   :name => "to_try", #the name of experiment
   :walltime => 3600,
@@ -65,6 +65,10 @@ def g5k_init(experim_params)
   experim_params.each { |attribute, value|
     @options[attribute.to_sym] = value
   }
+
+  if @options.has_key?(:environment)
+    @options[:types].push("deploy")
+  end
 end
 
 # run reservation and deployment
